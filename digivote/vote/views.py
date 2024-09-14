@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
 from .forms import LogInForm
+from .models import Poll, Choice
 
 # Create your views here.
 def index(request):
@@ -26,5 +28,13 @@ def logout(request):
     auth_logout(request)
     return redirect("auth_success")
 
+
 def auth_success(request):
     return render(request, "auth_success.html")
+
+
+@login_required(login_url='login')
+def polls(request):
+    polls = Poll.objects.all()
+    context = {'polls': polls}
+    return render(request, "polls.html", context)

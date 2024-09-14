@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Polls{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Poll</th>
+                <th>Publish Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for poll in polls %}
+                <tr>
+                    <td>{{ poll.poll_text }}</td>
+                    <td>{{ poll.publish_date }}</td>
+                    <td>{% if poll.poll_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</td>
+                    <td>{% if poll.poll_open %}<a href="#">Vote</a><br>{% endif %}<a href="#">Details</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
