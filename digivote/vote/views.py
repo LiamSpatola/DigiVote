@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import LogInForm
@@ -38,3 +38,13 @@ def polls(request):
     polls = Poll.objects.all()
     context = {'polls': polls}
     return render(request, "polls.html", context)
+
+@login_required(login_url='login')
+def details(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choices = Choice.objects.filter(poll=poll)
+    context = {
+        'poll': poll,
+        'choices': choices
+    }
+    return render(request, "details.html", context)

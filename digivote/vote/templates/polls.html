@@ -19,7 +19,7 @@
                     <td>{{ poll.poll_text }}</td>
                     <td>{{ poll.publish_date }}</td>
                     <td>{% if poll.poll_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</td>
-                    <td>{% if poll.poll_open %}<a href="#">Vote</a><br>{% endif %}<a href="#">Details</a></td>
+                    <td>{% if poll.poll_open %}<a href="#">Vote</a><br>{% endif %}<a href="{% url 'details' poll.id %}">Details</a></td>
                 </tr>
             {% endfor %}
         </tbody>
