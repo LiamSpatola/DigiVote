@@ -1,8 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+
 from .forms import LogInForm
-from .models import Poll, Choice, Vote
+from .models import Choice, Poll, Vote
+
 
 # Create your views here.
 def index(request):
@@ -13,15 +17,18 @@ def login(request):
     if request.method == "POST":
         form = LogInForm(request.POST)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data["username"], password=form.cleaned_data["password"])
+            user = authenticate(
+                username=form.cleaned_data["username"],
+                password=form.cleaned_data["password"],
+            )
             if user is not None:
                 auth_login(request, user)
                 return redirect("auth_success")
             else:
-                form.add_error(None, 'Invalid username or password')
+                form.add_error(None, "Invalid username or password")
     else:
         form = LogInForm()
-    return render(request, "login.html", {'form': form})
+    return render(request, "login.html", {"form": form})
 
 
 def logout(request):
@@ -33,54 +40,48 @@ def auth_success(request):
     return render(request, "auth_success.html")
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def polls(request):
     polls = Poll.objects.all()
-    context = {'polls': polls}
+    context = {"polls": polls}
     return render(request, "polls.html", context)
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def details(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
-    context = {
-        'poll': poll,
-        'choices': choices
-    }
+    context = {"poll": poll, "choices": choices}
     return render(request, "details.html", context)
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def vote(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
-    context = {
-        'poll': poll,
-        'choices': choices
-    }
+    context = {"poll": poll, "choices": choices}
     return render(request, "vote.html", context)
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def record_vote(request, poll_id, choice_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
     user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
     if user_has_voted or not poll.poll_open:
-        return redirect('vote_fail')
+        return redirect("vote_fail")
     else:
         Vote.objects.create(user=request.user, choice=choice, poll=poll)
         choice.votes += 1
         choice.save()
-        return redirect('vote_success')
-    
+        return redirect("vote_success")
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def vote_fail(request):
     return render(request, "vote_fail.html")
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 def vote_success(request):
     return render(request, "vote_success.html")
