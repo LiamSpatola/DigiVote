@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ poll.poll_text }} Voting{% endblock %}
+
+{% block body %}
+{% if poll.poll_open %}
+    <h1 class="text-center p-5">{{ poll.poll_text }}</h1>
+        <div class="text-center">
+            {% for choice in choices %}
+            <a href="{% url 'record_vote' poll.id choice.id %}" class="btn btn-primary m-3 text-white">Vote {{ choice.choice_text }}</a>
+            {% endfor %}
+        </div>
+{% else %}
+    <h1 class="text-center p-5">This poll has closed. You can't vote anymore.</h1>
+{% endif %}
+{% endblock %}

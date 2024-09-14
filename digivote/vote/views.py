@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import LogInForm
-from .models import Poll, Choice
+from .models import Poll, Choice, Vote
 
 # Create your views here.
 def index(request):
@@ -39,6 +39,7 @@ def polls(request):
     context = {'polls': polls}
     return render(request, "polls.html", context)
 
+
 @login_required(login_url='login')
 def details(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
@@ -48,3 +49,38 @@ def details(request, poll_id):
         'choices': choices
     }
     return render(request, "details.html", context)
+
+
+@login_required(login_url='login')
+def vote(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choices = Choice.objects.filter(poll=poll)
+    context = {
+        'poll': poll,
+        'choices': choices
+    }
+    return render(request, "vote.html", context)
+
+
+@login_required(login_url='login')
+def record_vote(request, poll_id, choice_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
+    user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
+    if user_has_voted or not poll.poll_open:
+        return redirect('vote_fail')
+    else:
+        Vote.objects.create(user=request.user, choice=choice, poll=poll)
+        choice.votes += 1
+        choice.save()
+        return redirect('vote_success')
+    
+
+@login_required(login_url='login')
+def vote_fail(request):
+    return render(request, "vote_fail.html")
+
+
+@login_required(login_url='login')
+def vote_success(request):
+    return render(request, "vote_success.html")
