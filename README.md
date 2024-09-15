@@ -51,18 +51,23 @@ DJANGO_SECRET_KEY='your-secret-key'
 ```
 #### NOTE: Ensure you keep your secret key secret, and choose something secure as your key.
 
-5. Run Database Migrations
+5. Change to the Project Directory
+```bash
+cd digivote
+```
+
+7. Run Database Migrations
 ```bash
 python3 manage.py makemigrations # On Windows use `py manage.py makemigrations`
 python3 manage.py migrate # On Windows use `py manage.py migrate`
 ```
 
-6. Create An Admin User
+7. Create An Admin User
 ```bash
 python3 manage.py createsuperuser # On Windows use `py manage.py createsuperuser`
 ```
 
-7. Run the Development Server
+8. Run the Development Server
 ```bash
 python3 manage.py runserver # On Windows use `py manage.py runserver`
 ```
