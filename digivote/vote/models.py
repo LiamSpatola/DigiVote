@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+import uuid
 
 
 def get_default_close_date():
@@ -41,6 +42,7 @@ class Vote(models.Model):
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
     voted_at = models.DateTimeField(auto_now_add=True)
+    receipt_id = models.UUIDField(default=uuid.uuid4() ,editable=False, unique=True)
 
     class Meta:
         unique_together = ("user", "poll")

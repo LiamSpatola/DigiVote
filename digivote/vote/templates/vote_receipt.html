@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Receipt - DigiVote</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @media print {
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            .receipt {
+                border: 1px solid #000;
+                padding: 20px;
+                width: 100%;
+                max-width: 600px;
+                margin: auto;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <h1 class="text-center">Vote Receipt</h1>
+        <p class="text-center"><strong>Vote ID:</strong> {{ vote.id }}</p>
+        <p class="text-center"><strong>Receipt ID:</strong> {{ vote.receipt_id }}</p>
+        <p class="text-center"><strong>Voter:</strong> {{ vote.user.first_name }}{{ vote.user.last_name }}</p>
+        <p class="text-center"><strong>Username:</strong> {{ vote.user.username }}</p>
+        <p class="text-center"><strong>Poll:</strong> {{ vote.poll.poll_text }}</p>
+        {% if choice_visible %}<p class="text-center"><strong>Choice:</strong> {{ vote.choice.choice_text }}</p>{% endif %}
+        <p class="text-center"><strong>Voting Date and Time:</strong> {{ vote.voted_at }}</p>
+        <img class="m-auto" style="margin-left: auto; margin-right: auto; display:block;" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ vote.receipt_id }}" alt="QR Code">
+        <p class="m-3 text-center">This vote receipt was automatically generated at {{ current_time }} by DigiVote.</p>
+    </div>
+    <div class="no-print text-center">
+        <a class="text-center" href="{% url 'my_votes' %}">Return</a>
+    </div>
+    <script>
+        window.onload = function() {
+            window.print();
+            window.onafterprint = function() {
+                window.close();
+            };
+        };
+    </script>
+</body>
+</html>

@@ -10,6 +10,7 @@
                 <th>Poll</th>
                 <th>Time</th>
                 <th>Selected Choice</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,7 @@
                     <td>{{ vote.poll.poll_text }}</td>
                     <td>{{ vote.voted_at }}</td>
                     <td>{{ vote.choice.choice_text }}</td>
+                    <td><a href="{% url 'vote_receipt' vote.id 1 %}">Print Receipt (With Selection)</a><br><a href="{% url 'vote_receipt' vote.id 0 %}">Print Receipt (Without Selection)</a></td>
                 </tr>
             {% endfor %}
         </tbody>

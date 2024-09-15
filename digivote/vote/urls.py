@@ -18,4 +18,5 @@ urlpatterns = [
     path("success", views.vote_success, name="vote_success"),
     path("fail", views.vote_fail, name="vote_fail"),
     path("my-votes", views.my_votes, name="my_votes"),
+    path("vote-receipt/<int:vote_id>/<int:choice_visible>", views.vote_receipt, name="vote_receipt")
 ]

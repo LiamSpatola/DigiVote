@@ -158,3 +158,16 @@ def my_votes(request):
     votes = Vote.objects.filter(user=request.user)
     context = {"votes": votes}
     return render(request, "my_votes.html", context)
+
+@login_required(login_url="login")
+def vote_receipt(request, vote_id, choice_visible):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
+    vote = get_object_or_404(Vote, pk=vote_id)
+    context = {
+        "vote": vote,
+        "current_time": timezone.now(),
+        "choice_visible": True if choice_visible == 1 else False
+    }
+    return render(request, "vote_receipt.html", context)
