@@ -58,7 +58,6 @@ cd digivote
 
 7. Run Database Migrations
 ```bash
-python3 manage.py makemigrations # On Windows use `py manage.py makemigrations`
 python3 manage.py migrate # On Windows use `py manage.py migrate`
 ```
 
