@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "vote.apps.VoteConfig",
+    "django_bootstrap5",
 ]
 
 MIDDLEWARE = [

@@ -20,6 +20,7 @@ DigiVote comes with the following features:
 - Ability to toggle the visibility of polls
 - System to print voting receipts for proof of voting
 - Open and close dates on polls to configure polls before they occur
+- User registration
 
 ## Technologies Used
 DigiVote uses multiple modern technologies:

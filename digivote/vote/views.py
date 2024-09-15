@@ -2,12 +2,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import LogInForm
+from .forms import LogInForm, RegisterForm
 from .models import Choice, Poll, Vote
-
 
 
 def index(request):
@@ -83,9 +83,9 @@ def details(request, poll_id):
             vote_percentage = round((choice.votes / total_votes) * 100, 2)
         else:
             vote_percentage = 0
-        
+
         choices_with_percentage.append(
-        {"choice": choice, "percentage": vote_percentage}
+            {"choice": choice, "percentage": vote_percentage}
         )
 
     now = timezone.now()
@@ -94,14 +94,18 @@ def details(request, poll_id):
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
-    time_remaining_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+    time_remaining_str = (
+        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+    )
 
     time_until_open = now - poll.open_date
     days, seconds = time_remaining.days, time_remaining.seconds
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
-    time_until_open_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+    time_until_open_str = (
+        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+    )
 
     context = {
         "poll": poll,
@@ -167,6 +171,7 @@ def my_votes(request):
     context = {"votes": votes}
     return render(request, "my_votes.html", context)
 
+
 @login_required(login_url="login")
 def vote_receipt(request, vote_id, choice_visible):
     polls = Poll.objects.all()
@@ -176,6 +181,32 @@ def vote_receipt(request, vote_id, choice_visible):
     context = {
         "vote": vote,
         "current_time": timezone.now(),
-        "choice_visible": True if choice_visible == 1 else False
+        "choice_visible": True if choice_visible == 1 else False,
     }
     return render(request, "vote_receipt.html", context)
+
+
+def register(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
+
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.is_active = False
+            user.save()
+            return redirect("register_success")
+    else:
+        form = RegisterForm()
+
+    return render(request, "register.html", {"form": form})
+
+
+def register_success(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
+
+    return render(request, "register_success.html")

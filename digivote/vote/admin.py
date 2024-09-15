@@ -20,6 +20,13 @@ class PollAdmin(admin.ModelAdmin):
     ]
     inlines = [ChoiceInline]
 
-    list_display = ("poll_text", "publish_date", "close_date", "poll_open", "visible", "id")
+    list_display = (
+        "poll_text",
+        "publish_date",
+        "close_date",
+        "poll_open",
+        "visible",
+        "id",
+    )
     search_fields = ("poll_text",)
     list_filter = ("publish_date", "poll_open")
