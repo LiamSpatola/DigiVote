@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}My Votes{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Poll</th>
+                <th>Time</th>
+                <th>Selected Choice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vote in votes %}
+                <tr>
+                    <td>{{ vote.poll.poll_text }}</td>
+                    <td>{{ vote.voted_at }}</td>
+                    <td>{{ vote.choice.choice_text }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

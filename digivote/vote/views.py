@@ -109,3 +109,10 @@ def vote_fail(request):
 @login_required(login_url="login")
 def vote_success(request):
     return render(request, "vote_success.html")
+
+
+@login_required(login_url="login")
+def my_votes(request):
+    votes = Vote.objects.filter(user=request.user)
+    context = {"votes": votes}
+    return render(request, "my_votes.html", context)

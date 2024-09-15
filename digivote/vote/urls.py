@@ -17,4 +17,5 @@ urlpatterns = [
     ),
     path("success", views.vote_success, name="vote_success"),
     path("fail", views.vote_fail, name="vote_fail"),
+    path("my-votes", views.my_votes, name="my_votes"),
 ]
