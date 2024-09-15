@@ -4,11 +4,25 @@
 
 {% block body %}
 {% if poll.poll_open %}
-    <h1 class="text-center p-5">{{ poll.poll_text }}</h1>
+        <h1 class="text-center m-3">{{ poll.poll_text }}</h1>
         <div class="text-center">
-            {% for choice in choices %}
-            <a href="{% url 'record_vote' poll.id choice.id %}" class="btn btn-primary m-3 text-white">Vote {{ choice.choice_text }}</a>
-            {% endfor %}
+            <div class="container mt-5">    
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Choice</th>
+                            <th>Actions</th>                    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for choice in choices %}
+                        <tr>
+                            <td>{{ choice.choice_text }}</td>
+                            <td><a href="{% url 'record_vote' poll.id choice.id %}">Vote For This Choice</a></td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 {% else %}
     <h1 class="text-center p-5">This poll has closed. You can't vote anymore.</h1>
