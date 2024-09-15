@@ -27,6 +27,7 @@ DigiVote uses multiple modern technologies:
 - Django (modern web framework written in python)
 - Bootstrap (modern front-end CSS framework)
 - Sqlite (simple file based database)
+- Docker (containerization service)
 
 ## Setup and Installation
 To install DigiVote, follow these steps:
@@ -79,6 +80,23 @@ python3 manage.py runserver # On Windows use `py manage.py runserver`
 ```
 
 #### NOTE: Use a proper server for production. The development server is not intended for production use.
+
+### Docker Installation
+If you wish to install using docker, use the following command, replacing the necessary portions:
+```docker
+docker run -e DJANGO_SUPERUSER_USERNAME=admin \
+           -e DJANGO_SUPERUSER_PASSWORD=admin \
+           -e DJANGO_SUPERUSER_EMAIL=admin@admin.com \
+           -e DJANGO_SECRET_KEY=super-secret-key \
+           -e DJANGO_TIMEZONE=UTC \
+           -e AUTOMATICALLY_APPROVE_REGISTRATIONS=false \
+           -p 8000:8000 \
+           -it -d \
+           --name digivote
+           liamspatola/digivote
+```
+
+The docker repository can be found here: [https://hub.docker.com/r/liamspatola/digivote](https://hub.docker.com/r/liamspatola/digivote).
 
 ## Usage
 To use DigiVote:

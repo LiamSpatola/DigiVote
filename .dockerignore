@@ -1,0 +1,10 @@
+.venv
+Dockerfile
+.dockerignore
+.env
+
+digivote/db.sqlite3
+
+digivote/digivote/__pycache__
+
+digivote/vote/__pycache__
