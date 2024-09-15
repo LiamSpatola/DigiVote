@@ -15,6 +15,7 @@ class Poll(models.Model):
     poll_open = models.BooleanField(default=True)
     open_date = models.DateTimeField("open date", default=timezone.now)
     close_date = models.DateTimeField("close date", default=get_default_close_date)
+    visible = models.BooleanField(default=True)
 
     def __str__(self):
         return self.poll_text

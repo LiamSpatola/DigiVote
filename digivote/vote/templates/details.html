@@ -3,37 +3,41 @@
 {% block title %}{{ poll.poll_text }} Details{% endblock %}
 
 {% block body %}
-<h1 class="m-5 text-center">{{ poll.poll_text }}</h1>
-<p class="text-center">Published: {{ poll.publish_date }}</p>
-<p class="text-center">{% if poll.poll_open %}Opened:{% else %}Opens:{% endif %} {{ poll.close_date }}</p>
-<p class="text-center">{% if poll.poll_open %}Closes:{% else %}Closed:{% endif %} {{ poll.close_date }}</p>
-{% if poll.poll_open %}<p class="text-center">Time Remaining: {{ time_remaining }}</p>{% else %}<p class="text-center">Time Until Poll Opens: {{ time_until_open }}</p>{% endif %}
-<p class="text-center">{% if poll.poll_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
-<div class="container mt-5">    
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Choice</th>
-                <th>Votes</th>
-                <th>Percentage</th>
-                <th>Amount of Total Votes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for choice in choices %}
-            <tr>
-                <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.choice_text }}</span></td>
-                <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.votes }}</span></td>
-                <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.percentage|floatformat:2 }}%</span></td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: {{ choice.percentage }}%;" aria-valuenow="{{ choice.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
-</div>
+{% if poll.visible %}
+    <h1 class="m-5 text-center">{{ poll.poll_text }}</h1>
+    <p class="text-center">Published: {{ poll.publish_date }}</p>
+    <p class="text-center">{% if poll.poll_open %}Opened:{% else %}Opens:{% endif %} {{ poll.close_date }}</p>
+    <p class="text-center">{% if poll.poll_open %}Closes:{% else %}Closed:{% endif %} {{ poll.close_date }}</p>
+    {% if poll.poll_open %}<p class="text-center">Time Remaining: {{ time_remaining }}</p>{% else %}<p class="text-center">Time Until Poll Opens: {{ time_until_open }}</p>{% endif %}
+    <p class="text-center">{% if poll.poll_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
+    <div class="container mt-5">    
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Choice</th>
+                    <th>Votes</th>
+                    <th>Percentage</th>
+                    <th>Amount of Total Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for choice in choices %}
+                <tr>
+                    <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.choice_text }}</span></td>
+                    <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.votes }}</span></td>
+                    <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.percentage|floatformat:2 }}%</span></td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ choice.percentage }}%;" aria-valuenow="{{ choice.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
+    </div>
+{% else %}
+<h1 class="text-center m-3">This Poll Has Been Hidden</h1>
+{% endif %}
 {% endblock %}
