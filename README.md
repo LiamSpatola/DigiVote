@@ -17,6 +17,9 @@ DigiVote comes with the following features:
 - Clean UI built with Bootstrap
 - Security systems to prevent voting multiple times
 - Intuitive and simple navigation systems
+- Ability to toggle the visibility of polls
+- System to print voting receipts for proof of voting
+- Open and close dates on polls to configure polls before they occur
 
 ## Technologies Used
 DigiVote uses multiple modern technologies:
