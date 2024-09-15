@@ -13,6 +13,7 @@ class Poll(models.Model):
     poll_text = models.CharField(max_length=512)
     publish_date = models.DateTimeField("date published", default=timezone.now)
     poll_open = models.BooleanField(default=True)
+    open_date = models.DateTimeField("open date", default=timezone.now)
     close_date = models.DateTimeField("close date", default=get_default_close_date)
 
     def __str__(self):
@@ -23,6 +24,16 @@ class Poll(models.Model):
     
     def update_status(self):
         if timezone.now() >= self.close_date:
+            self.poll_open = False
+            self.save()
+        elif timezone.now() < self.close_date and not self.poll_open:
+            self.poll_open = True
+            self.save()
+
+        if timezone.now() >= self.open_date:
+            self.poll_open = True
+            self.save()
+        elif timezone.now() < self.open_date and self.poll_open:
             self.poll_open = False
             self.save()
 

@@ -96,12 +96,20 @@ def details(request, poll_id):
     seconds = seconds % 60
     time_remaining_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
 
+    time_until_open = now - poll.open_date
+    days, seconds = time_remaining.days, time_remaining.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    time_until_open_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+
     context = {
         "poll": poll,
         "choices": choices_with_percentage,
         "winners": winners,
         "total_votes": total_votes,
-        "time_remaining": time_remaining_str
+        "time_remaining": time_remaining_str,
+        "time_until_open": time_until_open_str,
     }
     return render(request, "details.html", context)
 
