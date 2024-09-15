@@ -31,7 +31,7 @@
         <h1 class="text-center">Vote Receipt</h1>
         <p class="text-center"><strong>Vote ID:</strong> {{ vote.id }}</p>
         <p class="text-center"><strong>Receipt ID:</strong> {{ vote.receipt_id }}</p>
-        <p class="text-center"><strong>Voter:</strong> {{ vote.user.first_name }}{{ vote.user.last_name }}</p>
+        <p class="text-center"><strong>Voter:</strong> {{ vote.user.first_name }} {{ vote.user.last_name }}</p>
         <p class="text-center"><strong>Username:</strong> {{ vote.user.username }}</p>
         <p class="text-center"><strong>Poll:</strong> {{ vote.poll.poll_text }}</p>
         {% if choice_visible %}<p class="text-center"><strong>Choice:</strong> {{ vote.choice.choice_text }}</p>{% endif %}
