@@ -88,6 +88,7 @@ To use DigiVote:
 5. Either click on the `Details` link next to each poll, or press `Vote` to vote in each poll.
 6. To close a poll, navigate to `localhost:8000/admin` and sign in, then modify the poll you want to close and uncheck the `Poll Closed` box.
 7. To delete a poll, navigate to `localhost:8000/admin` and sign in, then select the poll you want to delete and press `Delete`.
+8. Once a user registers, click on their username in the user panel and check the `Is Active` box to activate their account and allow them to sign in.
 
 ## Contributing
 We welcome contributions to DigiVote. Please make sure, if you do decide to contribute, that you adhere to PEP8 standards.
