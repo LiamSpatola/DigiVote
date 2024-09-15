@@ -12,16 +12,25 @@
             <tr>
                 <th>Choice</th>
                 <th>Votes</th>
+                <th>Percentage</th>
+                <th>Amount of Total Votes</th>
             </tr>
         </thead>
         <tbody>
             {% for choice in choices %}
             <tr>
-                <td>{{ choice.choice_text }}</td>
-                <td>{{ choice.votes }}</td>
+                <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.choice_text }}</span></td>
+                <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.votes }}</span></td>
+                <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.percentage|floatformat:2 }}%</span></td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: {{ choice.percentage }}%;" aria-valuenow="{{ choice.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
 </div>
 {% endblock %}

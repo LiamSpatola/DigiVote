@@ -51,7 +51,31 @@ def polls(request):
 def details(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
-    context = {"poll": poll, "choices": choices}
+    total_votes = sum(choice.votes for choice in choices)
+    highest_vote = max(choice.votes for choice in choices)
+
+    if total_votes <= 0:
+        winners = []
+    else:
+        winners = [choice for choice in choices if choice.votes == highest_vote]
+
+    choices_with_percentage = []
+    for choice in choices:
+        if total_votes > 0:
+            vote_percentage = round((choice.votes / total_votes) * 100, 2)
+        else:
+            vote_percentage = 0
+
+        choices_with_percentage.append(
+            {"choice": choice, "percentage": vote_percentage}
+        )
+
+    context = {
+        "poll": poll,
+        "choices": choices_with_percentage,
+        "winners": winners,
+        "total_votes": total_votes,
+    }
     return render(request, "details.html", context)
 
 
