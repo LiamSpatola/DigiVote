@@ -3,6 +3,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from .forms import LogInForm
 from .models import Choice, Poll, Vote
@@ -51,6 +52,7 @@ def polls(request):
 def details(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
+    poll.update_status()
     total_votes = sum(choice.votes for choice in choices)
     highest_vote = max(choice.votes for choice in choices)
 
@@ -65,16 +67,25 @@ def details(request, poll_id):
             vote_percentage = round((choice.votes / total_votes) * 100, 2)
         else:
             vote_percentage = 0
-
+        
         choices_with_percentage.append(
-            {"choice": choice, "percentage": vote_percentage}
+        {"choice": choice, "percentage": vote_percentage}
         )
+
+    now = timezone.now()
+    time_remaining = poll.close_date - now
+    days, seconds = time_remaining.days, time_remaining.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    time_remaining_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds."
 
     context = {
         "poll": poll,
         "choices": choices_with_percentage,
         "winners": winners,
         "total_votes": total_votes,
+        "time_remaining": time_remaining_str
     }
     return render(request, "details.html", context)
 
@@ -82,6 +93,7 @@ def details(request, poll_id):
 @login_required(login_url="login")
 def vote(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
+    poll.update_status()
     choices = Choice.objects.filter(poll=poll)
     context = {"poll": poll, "choices": choices}
     return render(request, "vote.html", context)
@@ -90,6 +102,7 @@ def vote(request, poll_id):
 @login_required(login_url="login")
 def record_vote(request, poll_id, choice_id):
     poll = get_object_or_404(Poll, pk=poll_id)
+    poll.update_status()
     choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
     user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
     if user_has_voted or not poll.poll_open:

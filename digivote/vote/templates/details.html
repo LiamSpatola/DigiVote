@@ -5,6 +5,7 @@
 {% block body %}
 <h1 class="m-5 text-center">{{ poll.poll_text }}</h1>
 <p class="text-center">Published: {{ poll.publish_date }}</p>
+{% if poll.is_open %}<p class="text-center">Time Remaining: {{ time_remaining }}</p>{% endif %}
 <p class="text-center">{% if poll.poll_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
 <div class="container mt-5">    
     <table class="table table-striped">
