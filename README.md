@@ -47,7 +47,7 @@ pip install -e .
 4. Set Up Environment Variables
 <br>Create a file `.env` in the root directory with this content:
 ```env
-DJANGO_SECRET_KEY=your-secret-key
+DJANGO_SECRET_KEY='your-secret-key'
 ```
 #### NOTE: Ensure you keep your secret key secret, and choose something secure as your key.
 
