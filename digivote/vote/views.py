@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -5,9 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from dotenv import load_dotenv
 
 from .forms import LogInForm, RegisterForm
 from .models import Choice, Poll, Vote
+
+load_dotenv()
 
 
 def index(request):
@@ -195,8 +200,12 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user.is_active = False
-            user.save()
+            if (
+                os.environ.get("AUTOMATICALLY_APPROVE_REGISTRATIONS", default="false")
+                != "true"
+            ):
+                user.is_active = False
+                user.save()
             return redirect("register_success")
     else:
         form = RegisterForm()
@@ -209,4 +218,11 @@ def register_success(request):
     for poll in polls:
         poll.update_status()
 
-    return render(request, "register_success.html")
+    if os.environ.get("AUTOMATICALLY_APPROVE_REGISTRATIONS", default="false") == "true":
+        auto_approve = True
+    else:
+        auto_approve = False
+
+    context = {"auto_approve": auto_approve}
+
+    return render(request, "register_success.html", context)

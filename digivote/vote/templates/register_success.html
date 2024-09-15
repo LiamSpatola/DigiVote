@@ -5,5 +5,5 @@
 {% block body %}
 <h1 class="text-center m-3"><span style="font-size: 100px;" class="material-symbols-outlined">check_circle</span></h1>
 <h1 class="text-center">Successfully Registered</h1>
-<p class="text-center">You can't log in to your account yet. Please contact your administrator so they can approve your registration.</p>
+<p class="text-center">{% if not auto_approve %}You can't log in to your account yet. Please contact your administrator so they can approve your registration.{%else%}You can now log in to your account by clicking on the log in link in the nav bar and entering your credentials.{% endif %}</p>
 {% endblock %}

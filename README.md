@@ -51,10 +51,12 @@ pip install -e .
 4. Set Up Environment Variables
 <br>Create a file `.env` in the root directory with this content (replacing the values with your own ones):
 ```env
-DJANGO_SECRET_KEY='your-secret-key'
-DJANGO_TIMEZONE='Australia/Sydney'
+DJANGO_SECRET_KEY="your-secret-key"
+DJANGO_TIMEZONE="Australia/Sydney"
+AUTOMATICALLY_APPROVE_REGISTRATIONS="true"
 ```
 #### NOTE: Ensure you keep your secret key secret, and choose something secure as your key.
+#### NOTE: The `AUTOMATICALLY_APPROVE_REGISTRATIONS` variable determines whether users will require admin approval to sign up. If you set it to `true`, users will be automatically signed up without admin approval. If you set it to `false`, an admin will need to change the user to `Active` in the admin panel by clicking on the user and checking the box next to `Active` in the admin panel.
 
 5. Change to the Project Directory
 ```bash
@@ -88,7 +90,7 @@ To use DigiVote:
 5. Either click on the `Details` link next to each poll, or press `Vote` to vote in each poll.
 6. To close a poll, navigate to `localhost:8000/admin` and sign in, then modify the poll you want to close and uncheck the `Poll Closed` box.
 7. To delete a poll, navigate to `localhost:8000/admin` and sign in, then select the poll you want to delete and press `Delete`.
-8. Once a user registers, click on their username in the user panel and check the `Is Active` box to activate their account and allow them to sign in.
+8. If you have chosen to manually approve registrations, once a user registers, click on their username in the user panel and check the `Active` box to activate their account and allow them to sign in.
 
 ## Contributing
 We welcome contributions to DigiVote. Please make sure, if you do decide to contribute, that you adhere to PEP8 standards.
