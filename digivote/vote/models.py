@@ -21,7 +21,7 @@ class Poll(models.Model):
         return User.objects.filter(vote__poll=self)
     
     def update_status(self):
-        if self.close_date and timezone.now() > self.close_date:
+        if timezone.now() >= self.close_date:
             self.poll_open = False
             self.save()
 

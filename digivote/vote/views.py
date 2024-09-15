@@ -9,12 +9,18 @@ from .forms import LogInForm
 from .models import Choice, Poll, Vote
 
 
-# Create your views here.
+
 def index(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     return render(request, "index.html")
 
 
 def login(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     if request.method == "POST":
         form = LogInForm(request.POST)
         if form.is_valid():
@@ -33,26 +39,36 @@ def login(request):
 
 
 def logout(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     auth_logout(request)
     return redirect("auth_success")
 
 
 def auth_success(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     return render(request, "auth_success.html")
 
 
 @login_required(login_url="login")
 def polls(request):
     polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     context = {"polls": polls}
     return render(request, "polls.html", context)
 
 
 @login_required(login_url="login")
 def details(request, poll_id):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
-    poll.update_status()
     total_votes = sum(choice.votes for choice in choices)
     highest_vote = max(choice.votes for choice in choices)
 
@@ -78,7 +94,7 @@ def details(request, poll_id):
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
-    time_remaining_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds."
+    time_remaining_str = f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
 
     context = {
         "poll": poll,
@@ -92,8 +108,10 @@ def details(request, poll_id):
 
 @login_required(login_url="login")
 def vote(request, poll_id):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     poll = get_object_or_404(Poll, pk=poll_id)
-    poll.update_status()
     choices = Choice.objects.filter(poll=poll)
     context = {"poll": poll, "choices": choices}
     return render(request, "vote.html", context)
@@ -101,8 +119,10 @@ def vote(request, poll_id):
 
 @login_required(login_url="login")
 def record_vote(request, poll_id, choice_id):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     poll = get_object_or_404(Poll, pk=poll_id)
-    poll.update_status()
     choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
     user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
     if user_has_voted or not poll.poll_open:
@@ -116,16 +136,25 @@ def record_vote(request, poll_id, choice_id):
 
 @login_required(login_url="login")
 def vote_fail(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     return render(request, "vote_fail.html")
 
 
 @login_required(login_url="login")
 def vote_success(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     return render(request, "vote_success.html")
 
 
 @login_required(login_url="login")
 def my_votes(request):
+    polls = Poll.objects.all()
+    for poll in polls:
+        poll.update_status()
     votes = Vote.objects.filter(user=request.user)
     context = {"votes": votes}
     return render(request, "my_votes.html", context)
