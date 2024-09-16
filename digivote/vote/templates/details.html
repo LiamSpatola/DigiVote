@@ -21,6 +21,7 @@
                 </tr>
             </thead>
             <tbody>
+                {% if poll.results_visible %}
                 {% for choice in choices %}
                 <tr>
                     <td><span {% if choice.choice in winners %} style="color: green; font-weight: bold;" {% endif %}>{{ choice.choice.choice_text }}</span></td>
@@ -33,9 +34,19 @@
                     </td>
                 </tr>
                 {% endfor %}
+                {% else %}
+                {% for choice in choices %}
+                <tr>
+                    <td>{{ choice.choice.choice_text }}</td>
+                    <td><span class="material-symbols-outlined">visibility_off</span></td>
+                    <td><span class="material-symbols-outlined">visibility_off</span></td>
+                    <td><span class="material-symbols-outlined">visibility_off</span></td>
+                </tr>
+                {% endfor %}
+                {% endif %}
             </tbody>
         </table>
-        <p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
+        <p class="text-center"><strong>{% if poll.results_visible %}Total Votes: {{ total_votes }}{% else %}The results for this poll have been hidden.{% endif %}</strong></p>
     </div>
 {% else %}
 <h1 class="text-center m-3">This Poll Has Been Hidden</h1>

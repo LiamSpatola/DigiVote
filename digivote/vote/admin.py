@@ -16,7 +16,7 @@ class PollAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {"fields": ["poll_text"]}),
         ("Date Information", {"fields": ["publish_date", "open_date", "close_date"]}),
-        ("Visibility", {"fields": ["visible"]}),
+        ("Visibility", {"fields": ["visible", "results_visible"]}),
     ]
     inlines = [ChoiceInline]
 
