@@ -30,12 +30,11 @@
     <div class="receipt">
         <h1 class="text-center">Ballot Receipt</h1>
         <p class="text-center"><strong>Ballot ID:</strong> {{ ballot.id }}</p>
-        <p class="text-center"><strong>Receipt ID:</strong> {{ ballot.receipt_id }}</p>
         <p class="text-center"><strong>Voter:</strong> {{ ballot.user.first_name }} {{ ballot.user.last_name }}</p>
         <p class="text-center"><strong>Username:</strong> {{ ballot.user.username }}</p>
         <p class="text-center"><strong>Election:</strong> {{ ballot.election.election_name }}</p>
         <p class="text-center"><strong>Voting Date and Time:</strong> {{ ballot.voted_at }}</p>
-        <img class="m-auto" style="margin-left: auto; margin-right: auto; display:block;" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ ballot.receipt_id }}" alt="QR Code">
+        <img class="m-auto" style="margin-left: auto; margin-right: auto; display:block;" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ ballot.id }}" alt="QR Code">
         <p class="m-3 text-center">This ballot receipt was automatically generated at {{ current_time }} by DigiVote.</p>
     </div>
     <div class="no-print text-center">
