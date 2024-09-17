@@ -78,18 +78,17 @@ class Election(models.Model):
 
     def update_status(self):
         if timezone.now() >= self.close_date:
-            self.poll_open = False
+            self.election_open = False
             self.save()
-
         elif timezone.now() < self.close_date and not self.election_open:
-            self.poll_open = True
+            self.election_open = True
             self.save()
 
         if timezone.now() >= self.open_date:
-            self.poll_open = True
+            self.election_open = True
             self.save()
         elif timezone.now() < self.open_date and self.election_open:
-            self.poll_open = False
+            self.election_open = False
             self.save()
 
 

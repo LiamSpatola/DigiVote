@@ -119,7 +119,7 @@ def details(request, poll_id):
     )
 
     time_until_open = now - poll.open_date
-    days, seconds = time_remaining.days, time_remaining.seconds
+    days, seconds = time_until_open.days, time_until_open.seconds
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
@@ -308,7 +308,7 @@ def election_details(request, election_id):
     )
 
     time_until_open = now - election.open_date
-    days, seconds = time_remaining.days, time_remaining.seconds
+    days, seconds = time_until_open.days, time_until_open.seconds
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
