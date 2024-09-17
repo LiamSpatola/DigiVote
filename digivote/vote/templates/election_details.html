@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ election.election_name }} Details{% endblock %}
+
+{% block body %}
+{% if election.visible %}
+    <h1 class="m-5 text-center">{{ election.election_name }}</h1>
+    <p class="text-center">Published: {{ election.publish_date }}</p>
+    <p class="text-center">{% if election.election_open %}Opened:{% else %}Opens:{% endif %} {{ election.open_date }}</p>
+    <p class="text-center">{% if election.election_open %}Closes:{% else %}Closed:{% endif %} {{ election.close_date }}</p>
+    {% if election.election_open %}<p class="text-center">Time Remaining: {{ time_remaining }}</p>{% else %}<p class="text-center">Time Until Election Opens: {{ time_until_open }}</p>{% endif %}
+    <p class="text-center">{% if election.election_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
+    <div class="container mt-5">    
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Affiliation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate in candidates %}
+                <tr>
+                    <td>{{ candidate.full_name }}</td>
+                    <td>{{ candidate.affiliation }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if election.results_visible %}<p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
+        <p><strong>Result: <pre>{{ result }}</pre></strong></p>
+        {% else %}<p class="text-center">The results for this election have been hidden.</p>{% endif %}
+    </div>
+{% else %}
+<h1 class="text-center m-3">This Election Has Been Hidden</h1>
+{% endif %}
+{% endblock %}
