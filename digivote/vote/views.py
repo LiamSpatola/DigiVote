@@ -1,4 +1,6 @@
 import os
+import json
+import pyrankvote
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -8,24 +10,37 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from dotenv import load_dotenv
+from pyrankvote import Candidate as PyRankCandidate
+from pyrankvote import Ballot as PyRankBallot
 
-from .forms import LogInForm, RegisterForm
-from .models import Choice, Poll, Vote
+from .forms import LogInForm, RegisterForm, ElectionVote
+from .models import Choice, Poll, Vote, Election, Candidate, Ballot
 
 load_dotenv()
 
 
-def index(request):
+def update_polls():
+    # Internal use only. Not a view
     polls = Poll.objects.all()
     for poll in polls:
         poll.update_status()
+
+def update_elections():
+    # Internal use only. Not a view
+    elections = Election.objects.all()
+    for election in elections:
+        election.update_status()
+
+
+def index(request):
+    update_polls()
+    update_elections()
     return render(request, "index.html")
 
 
 def login(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
     if request.method == "POST":
         form = LogInForm(request.POST)
         if form.is_valid():
@@ -44,34 +59,33 @@ def login(request):
 
 
 def logout(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
     auth_logout(request)
     return redirect("auth_success")
 
 
 def auth_success(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
     return render(request, "auth_success.html")
 
 
 @login_required(login_url="login")
 def polls(request):
+    update_polls()
+    update_elections()
+
     polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
     context = {"polls": polls}
     return render(request, "polls.html", context)
 
 
 @login_required(login_url="login")
 def details(request, poll_id):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
     total_votes = sum(choice.votes for choice in choices)
@@ -125,9 +139,9 @@ def details(request, poll_id):
 
 @login_required(login_url="login")
 def vote(request, poll_id):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
     context = {"poll": poll, "choices": choices}
@@ -136,9 +150,9 @@ def vote(request, poll_id):
 
 @login_required(login_url="login")
 def record_vote(request, poll_id, choice_id):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     poll = get_object_or_404(Poll, pk=poll_id)
     choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
     user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
@@ -153,35 +167,38 @@ def record_vote(request, poll_id, choice_id):
 
 @login_required(login_url="login")
 def vote_fail(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     return render(request, "vote_fail.html")
 
 
 @login_required(login_url="login")
 def vote_success(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     return render(request, "vote_success.html")
 
 
 @login_required(login_url="login")
 def my_votes(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     votes = Vote.objects.filter(user=request.user)
-    context = {"votes": votes}
+    ballots = Ballot.objects.filter(user=request.user)
+    context = {
+        "votes": votes,
+        "ballots": ballots}
     return render(request, "my_votes.html", context)
 
 
 @login_required(login_url="login")
 def vote_receipt(request, vote_id, choice_visible):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
+
     vote = get_object_or_404(Vote, pk=vote_id)
     context = {
         "vote": vote,
@@ -192,9 +209,8 @@ def vote_receipt(request, vote_id, choice_visible):
 
 
 def register(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
 
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -214,9 +230,8 @@ def register(request):
 
 
 def register_success(request):
-    polls = Poll.objects.all()
-    for poll in polls:
-        poll.update_status()
+    update_polls()
+    update_elections()
 
     if os.environ.get("AUTOMATICALLY_APPROVE_REGISTRATIONS", default="false") == "true":
         auto_approve = True
@@ -224,5 +239,111 @@ def register_success(request):
         auto_approve = False
 
     context = {"auto_approve": auto_approve}
-
     return render(request, "register_success.html", context)
+
+@login_required(login_url="login")
+def elections(request):
+    update_polls()
+    update_elections()
+
+    elections = Election.objects.all()
+    context = {"elections": elections}
+    return render(request, "elections.html", context)
+
+@login_required(login_url="login")
+def election_vote(request, election_id):
+    election = get_object_or_404(Election, pk=election_id)
+    candidates = Candidate.objects.filter(election=election)
+
+    if request.method == "POST":
+        form = ElectionVote(request.POST, candidates=candidates)
+        if form.is_valid():
+            if not Ballot.objects.filter(user=request.user, election=election).exists():
+                ranked_candidates = []
+                for i in range(1, len(candidates) + 1):
+                    candidate_id = form.cleaned_data[f'rank_{i}']
+                    candidate = Candidate.objects.get(id=candidate_id)
+                    ranked_candidates.append({
+                        "rank": i,
+                        "candidate_id": candidate.id,
+                        "candidate_name": candidate.full_name
+                    })
+                preferences_json = json.dumps(ranked_candidates)
+                Ballot.objects.create(
+                    user=request.user,
+                    election=election,
+                    preferences=preferences_json,
+                )
+                return redirect("vote_success")
+            else:
+                return redirect("vote_fail")
+    else:
+        form = ElectionVote(candidates=candidates)
+
+    context = {
+        'form': form,
+        'election': election
+    }
+
+    return render(request, 'election_vote.html', context)
+
+@login_required(login_url="login")
+def election_details(request, election_id):
+    update_polls()
+    update_elections()
+
+    election = get_object_or_404(Election, pk=election_id)
+    candidates = Candidate.objects.filter(election=election)
+    total_votes = len(Ballot.objects.filter(election=election))
+
+    now = timezone.now()
+    time_remaining = election.close_date - now
+    days, seconds = time_remaining.days, time_remaining.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    time_remaining_str = (
+        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+    )
+
+    time_until_open = now - election.open_date
+    days, seconds = time_remaining.days, time_remaining.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    time_until_open_str = (
+        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+    )
+
+    ballots = Ballot.objects.filter(election=election)
+    pyrank_candidates = [PyRankCandidate(candidate.full_name) for candidate in candidates]
+    pyrank_ballots = []
+    for ballot in ballots:
+        preferences = json.loads(ballot.preferences)
+        ranked_candidates = []
+        for i in range(len(preferences)):
+            ranked_candidates.append(PyRankCandidate(preferences[i]["candidate_name"]))
+        pyrank_ballots.append(PyRankBallot(ranked_candidates=ranked_candidates))
+    election_result = pyrankvote.instant_runoff_voting(pyrank_candidates, pyrank_ballots)
+
+    context = {
+        "election": election,
+        "candidates": candidates,
+        "total_votes": total_votes,
+        "time_remaining": time_remaining_str,
+        "time_until_open": time_until_open_str,
+        "result": election_result,
+    }
+    return render(request, "election_details.html", context)
+
+@login_required(login_url="login")
+def ballot_receipt(request, ballot_id):
+    update_polls()
+    update_elections()
+
+    ballot = get_object_or_404(Ballot, pk=ballot_id)
+    context = {
+        "ballot": ballot,
+        "current_time": timezone.now(),
+    }
+    return render(request, "ballot_receipt.html", context)

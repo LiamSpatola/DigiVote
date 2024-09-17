@@ -25,4 +25,8 @@ urlpatterns = [
     ),
     path("register", views.register, name="register"),
     path("register-success", views.register_success, name="register_success"),
+    path("elections", views.elections, name="elections"),
+    path("election-vote/<int:election_id>", views.election_vote, name="election_vote"),
+    path("election-details/<int:election_id>", views.election_details, name="election_details"),
+    path("ballot-receipt/<int:ballot_id>", views.ballot_receipt, name="ballot_receipt"),
 ]

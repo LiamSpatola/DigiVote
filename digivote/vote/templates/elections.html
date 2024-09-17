@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Elections{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Election</th>
+                <th>Publish Date</th>
+                <th>Open Date</th>
+                <th>Close Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for election in elections %}
+            {% if election.visible %}
+                <tr>
+                    <td>{{ election.election_name }}</td>
+                    <td>{{ election.publish_date }}</td>
+                    <td>{{ election.open_date }}</td>
+                    <td>{{ election.close_date }}</td>
+                    <td>{% if election.election_open %}<span style="color: green;">Open</span>{%else %}<span style="color: red;">Closed</span>{% endif %}</td>
+                    <td>{% if election.election_open %}<a href="{% url 'election_vote' election.id %}">Vote</a><br>{%endif %}<a href="{% url 'election_details' election.id %}">Details</a></td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

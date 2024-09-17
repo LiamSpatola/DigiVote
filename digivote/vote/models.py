@@ -63,3 +63,57 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"User: {self.user} Choice: {self.choice} Poll: {self.poll}"
+
+
+class Election(models.Model):
+    election_name = models.CharField(max_length=512)
+    publish_date = models.DateTimeField("date published", default=timezone.now)
+    election_open = models.BooleanField(default=True)
+    open_date = models.DateTimeField("open date", default=timezone.now)
+    close_date = models.DateTimeField("close date", default=get_default_close_date)
+    visible = models.BooleanField(default=True)
+    results_visible = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.election_name
+
+    def update_status(self):
+        if timezone.now() >= self.close_date:
+            self.poll_open = False
+            self.save()
+
+        elif timezone.now() < self.close_date and not self.election_open:
+            self.poll_open = True
+            self.save()
+
+        if timezone.now() >= self.open_date:
+            self.poll_open = True
+            self.save()
+        elif timezone.now() < self.open_date and self.election_open:
+            self.poll_open = False
+            self.save()
+
+
+class Ballot(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    preferences = models.JSONField()
+    voted_at = models.DateTimeField(auto_now_add=True)
+    receipt_id = models.UUIDField(default=uuid.uuid4(), editable=False, unique=True)
+
+    class Meta:
+        unique_together = ("user", "election")
+
+
+class Candidate(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    affiliation = models.CharField(max_length=256)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.full_name
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"

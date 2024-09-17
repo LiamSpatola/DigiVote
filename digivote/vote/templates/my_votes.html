@@ -3,6 +3,7 @@
 {% block title %}My Votes{% endblock %}
 
 {% block body %}
+<h3 class="text-center mt-5">Polls</h3>
 <div class="container mt-5">
     <table class="table table-striped">
         <thead>
@@ -21,6 +22,28 @@
                     <td>{{ vote.choice.choice_text }}</td>
                     <td><a href="{% url 'vote_receipt' vote.id 1 %}">Print Receipt (With Selection)</a><br><a href="{% url 'vote_receipt' vote.id 0 %}">Print Receipt (Without Selection)</a></td>
                 </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-center mt-5">Elections</h3>
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Election</th>
+                <th>Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ballot in ballots %}
+            <tr>
+                <td>{{ ballot.election.election_name }}</td>
+                <td>{{ ballot.voted_at }}</td>
+                <td><a href="{% url 'ballot_receipt' ballot.id %}">Print Receipt</a></td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
