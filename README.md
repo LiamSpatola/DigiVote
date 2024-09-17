@@ -21,6 +21,7 @@ DigiVote comes with the following features:
 - System to print voting receipts for proof of voting
 - Open and close dates on polls to configure polls before they occur
 - User registration
+- Elections with instant runoff voting
 
 ## Technologies Used
 DigiVote uses multiple modern technologies:
@@ -40,13 +41,13 @@ cd digivote
 
 2. Create a Python Virtual Environment
 ```bash
-python -m venv venv
+python3 -m venv venv # On Windows use `py -m venv venv`
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
 
 3. Install dependancies
 ```bash
-pip install -e .
+pip3 install -e . # On windows use `pip install -e .`
 ```
 
 4. Set Up Environment Variables
@@ -102,13 +103,14 @@ The docker repository can be found here: [https://hub.docker.com/r/liamspatola/d
 To use DigiVote:
 
 1. Navigate to `localhost:8000/admin` and sign in
-2. Create users and polls
+2. Create users, polls, and elections
 3. Navigate to `localhost:8000` and sign in
 4. Click on `Polls` in the navbar
 5. Either click on the `Details` link next to each poll, or press `Vote` to vote in each poll.
 6. To close a poll, navigate to `localhost:8000/admin` and sign in, then modify the poll you want to close and uncheck the `Poll Closed` box.
 7. To delete a poll, navigate to `localhost:8000/admin` and sign in, then select the poll you want to delete and press `Delete`.
 8. If you have chosen to manually approve registrations, once a user registers, click on their username in the user panel and check the `Active` box to activate their account and allow them to sign in.
+9. The above also applies for elections.
 
 ## Contributing
 We welcome contributions to DigiVote. Please make sure, if you do decide to contribute, that you adhere to PEP8 standards.
