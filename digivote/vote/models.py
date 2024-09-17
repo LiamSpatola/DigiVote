@@ -56,7 +56,6 @@ class Vote(models.Model):
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
     voted_at = models.DateTimeField(auto_now_add=True)
-    receipt_id = models.UUIDField(default=uuid.uuid4(), editable=False, unique=True)
 
     class Meta:
         unique_together = ("user", "poll")
@@ -99,7 +98,6 @@ class Ballot(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     preferences = models.JSONField()
     voted_at = models.DateTimeField(auto_now_add=True)
-    receipt_id = models.UUIDField(default=uuid.uuid4(), editable=False, unique=True)
 
     class Meta:
         unique_together = ("user", "election")
@@ -113,7 +111,7 @@ class Candidate(models.Model):
 
     def __str__(self):
         return self.full_name
-    
+
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"

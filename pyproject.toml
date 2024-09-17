@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "digivote"
-version = "2.0.0"
+version = "2.0.1"
 description = "A django application for conducting elections and holding votes digitally with ease."
 authors = ["LiamSpatola"]
 license = "GNU GPLv3"
