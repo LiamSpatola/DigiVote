@@ -8,7 +8,6 @@
     <p class="text-center">Published: {{ election.publish_date }}</p>
     <p class="text-center">{% if election.election_open %}Opened:{% else %}Opens:{% endif %} {{ election.open_date }}</p>
     <p class="text-center">{% if election.election_open %}Closes:{% else %}Closed:{% endif %} {{ election.close_date }}</p>
-    {% if election.election_open %}<p class="text-center">Time Remaining: {{ time_remaining }}</p>{% else %}<p class="text-center">Time Until Election Opens: {{ time_until_open }}</p>{% endif %}
     <p class="text-center">{% if election.election_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
     <div class="container mt-5">    
         <table class="table table-striped">

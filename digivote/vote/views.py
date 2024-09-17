@@ -108,32 +108,11 @@ def details(request, poll_id):
             {"choice": choice, "percentage": vote_percentage}
         )
 
-    now = timezone.now()
-    time_remaining = poll.close_date - now
-    days, seconds = time_remaining.days, time_remaining.seconds
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
-    time_remaining_str = (
-        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
-    )
-
-    time_until_open = now - poll.open_date
-    days, seconds = time_until_open.days, time_until_open.seconds
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
-    time_until_open_str = (
-        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
-    )
-
     context = {
         "poll": poll,
         "choices": choices_with_percentage,
         "winners": winners,
         "total_votes": total_votes,
-        "time_remaining": time_remaining_str,
-        "time_until_open": time_until_open_str,
     }
     return render(request, "details.html", context)
 
@@ -297,25 +276,6 @@ def election_details(request, election_id):
     candidates = Candidate.objects.filter(election=election)
     total_votes = len(Ballot.objects.filter(election=election))
 
-    now = timezone.now()
-    time_remaining = election.close_date - now
-    days, seconds = time_remaining.days, time_remaining.seconds
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
-    time_remaining_str = (
-        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
-    )
-
-    time_until_open = now - election.open_date
-    days, seconds = time_until_open.days, time_until_open.seconds
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
-    time_until_open_str = (
-        f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
-    )
-
     ballots = Ballot.objects.filter(election=election)
     pyrank_candidates = [
         PyRankCandidate(candidate.full_name) for candidate in candidates
@@ -335,8 +295,6 @@ def election_details(request, election_id):
         "election": election,
         "candidates": candidates,
         "total_votes": total_votes,
-        "time_remaining": time_remaining_str,
-        "time_until_open": time_until_open_str,
         "result": election_result,
     }
     return render(request, "election_details.html", context)
