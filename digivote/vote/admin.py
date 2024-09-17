@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Choice, Poll, Election, Candidate
+from .models import Candidate, Choice, Election, Poll
 
 # Register your models here.
 admin.AdminSite.site_header = "DigiVote Administration"
@@ -10,9 +10,11 @@ class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 2
 
+
 class CandidateInline(admin.TabularInline):
     model = Candidate
     extra = 3
+
 
 @admin.register(Poll)
 class PollAdmin(admin.ModelAdmin):
@@ -33,6 +35,7 @@ class PollAdmin(admin.ModelAdmin):
     )
     search_fields = ("poll_text",)
     list_filter = ("publish_date", "poll_open")
+
 
 @admin.register(Election)
 class ElectionAdmin(admin.ModelAdmin):

@@ -1,7 +1,7 @@
-import os
 import json
-import pyrankvote
+import os
 
+import pyrankvote
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -10,11 +10,11 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from dotenv import load_dotenv
-from pyrankvote import Candidate as PyRankCandidate
 from pyrankvote import Ballot as PyRankBallot
+from pyrankvote import Candidate as PyRankCandidate
 
-from .forms import LogInForm, RegisterForm, ElectionVote
-from .models import Choice, Poll, Vote, Election, Candidate, Ballot
+from .forms import ElectionVote, LogInForm, RegisterForm
+from .models import Ballot, Candidate, Choice, Election, Poll, Vote
 
 load_dotenv()
 
@@ -24,6 +24,7 @@ def update_polls():
     polls = Poll.objects.all()
     for poll in polls:
         poll.update_status()
+
 
 def update_elections():
     # Internal use only. Not a view
@@ -188,9 +189,7 @@ def my_votes(request):
 
     votes = Vote.objects.filter(user=request.user)
     ballots = Ballot.objects.filter(user=request.user)
-    context = {
-        "votes": votes,
-        "ballots": ballots}
+    context = {"votes": votes, "ballots": ballots}
     return render(request, "my_votes.html", context)
 
 
@@ -241,6 +240,7 @@ def register_success(request):
     context = {"auto_approve": auto_approve}
     return render(request, "register_success.html", context)
 
+
 @login_required(login_url="login")
 def elections(request):
     update_polls()
@@ -249,6 +249,7 @@ def elections(request):
     elections = Election.objects.all()
     context = {"elections": elections}
     return render(request, "elections.html", context)
+
 
 @login_required(login_url="login")
 def election_vote(request, election_id):
@@ -261,13 +262,15 @@ def election_vote(request, election_id):
             if not Ballot.objects.filter(user=request.user, election=election).exists():
                 ranked_candidates = []
                 for i in range(1, len(candidates) + 1):
-                    candidate_id = form.cleaned_data[f'rank_{i}']
+                    candidate_id = form.cleaned_data[f"rank_{i}"]
                     candidate = Candidate.objects.get(id=candidate_id)
-                    ranked_candidates.append({
-                        "rank": i,
-                        "candidate_id": candidate.id,
-                        "candidate_name": candidate.full_name
-                    })
+                    ranked_candidates.append(
+                        {
+                            "rank": i,
+                            "candidate_id": candidate.id,
+                            "candidate_name": candidate.full_name,
+                        }
+                    )
                 preferences_json = json.dumps(ranked_candidates)
                 Ballot.objects.create(
                     user=request.user,
@@ -280,12 +283,10 @@ def election_vote(request, election_id):
     else:
         form = ElectionVote(candidates=candidates)
 
-    context = {
-        'form': form,
-        'election': election
-    }
+    context = {"form": form, "election": election}
 
-    return render(request, 'election_vote.html', context)
+    return render(request, "election_vote.html", context)
+
 
 @login_required(login_url="login")
 def election_details(request, election_id):
@@ -316,7 +317,9 @@ def election_details(request, election_id):
     )
 
     ballots = Ballot.objects.filter(election=election)
-    pyrank_candidates = [PyRankCandidate(candidate.full_name) for candidate in candidates]
+    pyrank_candidates = [
+        PyRankCandidate(candidate.full_name) for candidate in candidates
+    ]
     pyrank_ballots = []
     for ballot in ballots:
         preferences = json.loads(ballot.preferences)
@@ -324,7 +327,9 @@ def election_details(request, election_id):
         for i in range(len(preferences)):
             ranked_candidates.append(PyRankCandidate(preferences[i]["candidate_name"]))
         pyrank_ballots.append(PyRankBallot(ranked_candidates=ranked_candidates))
-    election_result = pyrankvote.instant_runoff_voting(pyrank_candidates, pyrank_ballots)
+    election_result = pyrankvote.instant_runoff_voting(
+        pyrank_candidates, pyrank_ballots
+    )
 
     context = {
         "election": election,
@@ -335,6 +340,7 @@ def election_details(request, election_id):
         "result": election_result,
     }
     return render(request, "election_details.html", context)
+
 
 @login_required(login_url="login")
 def ballot_receipt(request, ballot_id):

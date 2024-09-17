@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+
 from .models import Candidate
 
 
@@ -25,16 +26,18 @@ class RegisterForm(UserCreationForm):
             "password2",
         )
 
+
 class ElectionVote(forms.Form):
     def __init__(self, *args, candidates=None, **kwargs):
         super(ElectionVote, self).__init__(*args, **kwargs)
         if candidates:
             for i, candidate in enumerate(candidates):
-                self.fields[f'rank_{i+1}'] = forms.ChoiceField(
-                    choices=[(None, "Preference")] + [(c.id, c.full_name) for c in candidates],
+                self.fields[f"rank_{i+1}"] = forms.ChoiceField(
+                    choices=[(None, "Preference")]
+                    + [(c.id, c.full_name) for c in candidates],
                     label=f"Preference {i+1}",
-                    widget=forms.Select(attrs={'class': 'form-control'}),
-                    required=True
+                    widget=forms.Select(attrs={"class": "form-control"}),
+                    required=True,
                 )
 
     def clean(self):
