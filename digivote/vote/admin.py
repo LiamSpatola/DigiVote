@@ -43,6 +43,7 @@ class ElectionAdmin(admin.ModelAdmin):
         (None, {"fields": ["election_name"]}),
         ("Date Information", {"fields": ["publish_date", "open_date", "close_date"]}),
         ("Visibility", {"fields": ["visible", "results_visible"]}),
+        ("Election Configuration", {"fields": ["election_type", "number_of_seats"]}),
     ]
     inlines = [CandidateInline]
 
@@ -51,6 +52,8 @@ class ElectionAdmin(admin.ModelAdmin):
         "publish_date",
         "close_date",
         "election_open",
+        "election_type",
+        "number_of_seats",
         "visible",
         "id",
     )

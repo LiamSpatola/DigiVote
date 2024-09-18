@@ -1,7 +1,7 @@
-import uuid
 from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -29,17 +29,12 @@ class Poll(models.Model):
     def update_status(self):
         if timezone.now() >= self.close_date:
             self.poll_open = False
-            self.save()
-        elif timezone.now() < self.close_date and not self.poll_open:
+        elif timezone.now() >= self.open_date:
             self.poll_open = True
-            self.save()
-
-        if timezone.now() >= self.open_date:
-            self.poll_open = True
-            self.save()
-        elif timezone.now() < self.open_date and self.poll_open:
+        else:
             self.poll_open = False
-            self.save()
+
+        self.save()
 
 
 class Choice(models.Model):
@@ -68,6 +63,16 @@ class Election(models.Model):
     election_name = models.CharField(max_length=512)
     publish_date = models.DateTimeField("date published", default=timezone.now)
     election_open = models.BooleanField(default=True)
+    election_type = models.CharField(
+        choices=[
+            ("IRV", "Instant Runoff Voting"),
+            ("STV", "Single Transferable Vote"),
+            ("PBV", "Preferential Block Voting"),
+        ],
+        max_length=3,
+        default="IRV",
+    )
+    number_of_seats = models.IntegerField(default=1)
     open_date = models.DateTimeField("open date", default=timezone.now)
     close_date = models.DateTimeField("close date", default=get_default_close_date)
     visible = models.BooleanField(default=True)
@@ -79,17 +84,20 @@ class Election(models.Model):
     def update_status(self):
         if timezone.now() >= self.close_date:
             self.election_open = False
-            self.save()
-        elif timezone.now() < self.close_date and not self.election_open:
+        elif timezone.now() >= self.open_date:
             self.election_open = True
-            self.save()
-
-        if timezone.now() >= self.open_date:
-            self.election_open = True
-            self.save()
-        elif timezone.now() < self.open_date and self.election_open:
+        else:
             self.election_open = False
-            self.save()
+
+        self.save()
+
+    def clean(self):
+        super().clean()
+
+        if self.election_type == "IRV" and self.number_of_seats > 1:
+            raise ValidationError(
+                "Instant Runoff Voting can only be used for single-seat elections."
+            )
 
 
 class Ballot(models.Model):

@@ -287,9 +287,25 @@ def election_details(request, election_id):
         for i in range(len(preferences)):
             ranked_candidates.append(PyRankCandidate(preferences[i]["candidate_name"]))
         pyrank_ballots.append(PyRankBallot(ranked_candidates=ranked_candidates))
-    election_result = pyrankvote.instant_runoff_voting(
-        pyrank_candidates, pyrank_ballots
-    )
+    # election_result = pyrankvote.instant_runoff_voting(pyrank_candidates, pyrank_ballots)
+
+    match election.election_type:
+        case "IRV":
+            election_result = pyrankvote.instant_runoff_voting(
+                pyrank_candidates, pyrank_ballots
+            )
+        case "STV":
+            election_result = pyrankvote.single_transferable_vote(
+                pyrank_candidates,
+                pyrank_ballots,
+                number_of_seats=election.number_of_seats,
+            )
+        case "PBV":
+            election_result = pyrankvote.preferential_block_voting(
+                pyrank_candidates,
+                pyrank_ballots,
+                number_of_seats=election.number_of_seats,
+            )
 
     context = {
         "election": election,

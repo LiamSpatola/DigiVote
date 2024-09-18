@@ -8,6 +8,8 @@
     <p class="text-center">Published: {{ election.publish_date }}</p>
     <p class="text-center">{% if election.election_open %}Opened:{% else %}Opens:{% endif %} {{ election.open_date }}</p>
     <p class="text-center">{% if election.election_open %}Closes:{% else %}Closed:{% endif %} {{ election.close_date }}</p>
+    <p class="text-center">Election Type: {% if election.election_type == "IRV" %}Instant Runoff Voting{% elif election.election_type == "STV" %}Single Transferable Vote{% else %}Preferntial Block Voting{% endif %}</p>
+    <p class="text-center">Number of Seats Being Contested: {{ election.number_of_seats }}</p>
     <p class="text-center">{% if election.election_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
     <div class="container mt-5">    
         <table class="table table-striped">
@@ -28,7 +30,7 @@
         </table>
         {% if election.results_visible %}<p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
         <p><strong>Result: <pre>{{ result }}</pre></strong></p>
-        {% else %}<p class="text-center">The results for this election have been hidden.</p>{% endif %}
+        {% else %}<p class="text-center"><strong>The results for this election have been hidden.</strong></p>{% endif %}
     </div>
 {% else %}
 <h1 class="text-center m-3">This Election Has Been Hidden</h1>
