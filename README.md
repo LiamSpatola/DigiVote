@@ -56,6 +56,7 @@ pip3 install -e . # On windows use `pip install -e .`
 DJANGO_SECRET_KEY="your-secret-key"
 DJANGO_TIMEZONE="Australia/Sydney"
 AUTOMATICALLY_APPROVE_REGISTRATIONS="true"
+DJANGO_HOSTNAME=127.0.0.1
 ```
 #### NOTE: Ensure you keep your secret key secret, and choose something secure as your key.
 #### NOTE: The `AUTOMATICALLY_APPROVE_REGISTRATIONS` variable determines whether users will require admin approval to sign up. If you set it to `true`, users will be automatically signed up without admin approval. If you set it to `false`, an admin will need to change the user to `Active` in the admin panel by clicking on the user and checking the box next to `Active` in the admin panel.
@@ -91,6 +92,7 @@ docker run -e DJANGO_SUPERUSER_USERNAME=admin \
            -e DJANGO_SECRET_KEY=super-secret-key \
            -e DJANGO_TIMEZONE=UTC \
            -e AUTOMATICALLY_APPROVE_REGISTRATIONS=false \
+           -e DJANGO_HOSTNAME=127.0.0.1
            -p 8000:8000 \
            -it -d \
            --name digivote

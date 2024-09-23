@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default="default-secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*.liamspatola.com"]
+ALLOWED_HOSTS = [os.environ.get("DJANGO_HOSTNAME", default="127.0.0.1")]
 
 
 # Application definition
