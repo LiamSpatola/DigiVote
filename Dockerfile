@@ -1,9 +1,17 @@
-FROM python:3.12
+FROM python:3.12-alpine
+
 WORKDIR /DigiVote
-COPY setup.sh /DigiVote/setup.sh
-RUN chmod +x /DigiVote/setup.sh
+
+COPY docker-entrypoint.sh /DigiVote/docker-entrypoint.sh
+
+RUN chmod +x /DigiVote/docker-entrypoint.sh
+
 COPY . .
+
 RUN pip install -e .
+
 EXPOSE 8000
-ENTRYPOINT [ "bash", "/DigiVote/setup.sh" ]
+
+ENTRYPOINT [ "/bin/sh", "/DigiVote/docker-entrypoint.sh" ]
+
 CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]

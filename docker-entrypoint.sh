@@ -1,15 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
-# For the docker image
-
-# Change into the correct dir
 cd digivote
-
-# Apply database migrations
+# Migrating the changes to the database
 python3 manage.py migrate
-
-# Create superuser
+# Creating a super user with the env variables supplied by the user
 python3 manage.py createsuperuser --no-input --username ${DJANGO_SUPERUSER_USERNAME} --email ${DJANGO_SUPERUSER_EMAIL}
 
-# Start the server
 exec "$@"
