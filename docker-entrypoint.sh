@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd digivote
 # Migrating the changes to the database
