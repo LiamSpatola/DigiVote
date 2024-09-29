@@ -93,10 +93,31 @@ docker run -e DJANGO_SUPERUSER_USERNAME=admin \
            -e DJANGO_TIMEZONE=UTC \
            -e AUTOMATICALLY_APPROVE_REGISTRATIONS=false \
            -e DJANGO_HOSTNAME=127.0.0.1 \
+           -v ./digivote:/DigiVote/digivote/data
            -p 8000:8000 \
            -it -d \
            --name digivote
            liamspatola/digivote
+```
+
+Or the following docker compose file, again replacing the necessary portions:
+```yaml
+services:
+  digivote:
+    image: liamspatola/digivote
+    ports:
+      - 8000:8000
+    environment:
+      - DJANGO_SUPERUSER_USERNAME: admin
+      - DJANGO_SUPERUSER_EMAIL: admin@admin.com
+      - DJANGO_SECRET_KEY: super-secret-key
+      - DJANGO_TIMEZONE: UTC
+      - AUTOMATICALLY_APPROVE_REGISTRATIONS: false
+      - DJANGO_HOSTNAME: localhost
+    volumes:
+      - digivote:/DigiVote/digivote/data
+volumes:
+  digivote:
 ```
 
 The docker repository can be found here: [https://hub.docker.com/r/liamspatola/digivote](https://hub.docker.com/r/liamspatola/digivote).
