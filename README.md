@@ -124,13 +124,13 @@ The docker repository can be found here: [https://hub.docker.com/r/liamspatola/d
 
 ## Usage
 ### Creating polls and elections
-<iframe src="https://scribehow.com/embed/Creating_Polls_and_Elections_in_the_Admin_Panel__x6ES7eIhSMOxlkwsFbl7Kg" width="100%" height="640" allowfullscreen frameborder="0"></iframe>
+[Click to view the tutorial](https://scribehow.com/embed/Creating_Polls_and_Elections_in_the_Admin_Panel__x6ES7eIhSMOxlkwsFbl7Kg)
 
 ### Register as a new user
-<iframe src="https://scribehow.com/embed/How_to_Register_a_User_in_DigiVote__wiBxmyAZQKS6tcGq9zLDrA" width="100%" height="640" allowfullscreen frameborder="0"></iframe>
+[Click to view the tutorial](https://scribehow.com/embed/How_to_Register_a_User_in_DigiVote__wiBxmyAZQKS6tcGq9zLDrA)
 
 ### Voting
-<iframe src="https://scribehow.com/embed/How_To_Vote_Using_The_DigiVote_System__P1falNahRpmVNTa5zeMnZA" width="100%" height="640" allowfullscreen frameborder="0"></iframe>
+[Click to view the tutorial](https://scribehow.com/embed/How_To_Vote_Using_The_DigiVote_System__P1falNahRpmVNTa5zeMnZA)
 
 ## Contributing
 We welcome contributions to DigiVote. Please make sure, if you do decide to contribute, that you adhere to PEP8 standards.
