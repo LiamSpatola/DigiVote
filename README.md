@@ -93,10 +93,10 @@ docker run -e DJANGO_SUPERUSER_USERNAME=admin \
            -e DJANGO_TIMEZONE=UTC \
            -e AUTOMATICALLY_APPROVE_REGISTRATIONS=false \
            -e DJANGO_HOSTNAME=localhost \
-           -v ./digivote:/DigiVote/digivote/data
+           -v ./digivote:/DigiVote/digivote/data \
            -p 8000:8000 \
            -it -d \
-           --name digivote
+           --name digivote \
            liamspatola/digivote
 ```
 
