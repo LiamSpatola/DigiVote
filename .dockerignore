@@ -3,7 +3,7 @@ Dockerfile
 .dockerignore
 .env
 
-digivote/db.sqlite3
+digivote/data/db.sqlite3
 
 digivote/digivote/__pycache__
 
