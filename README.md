@@ -92,7 +92,7 @@ docker run -e DJANGO_SUPERUSER_USERNAME=admin \
            -e DJANGO_SECRET_KEY=super-secret-key \
            -e DJANGO_TIMEZONE=UTC \
            -e AUTOMATICALLY_APPROVE_REGISTRATIONS=false \
-           -e DJANGO_HOSTNAME=127.0.0.1 \
+           -e DJANGO_HOSTNAME=localhost \
            -v ./digivote:/DigiVote/digivote/data
            -p 8000:8000 \
            -it -d \
@@ -110,6 +110,7 @@ services:
     environment:
       - DJANGO_SUPERUSER_USERNAME: admin
       - DJANGO_SUPERUSER_EMAIL: admin@admin.com
+      - DJANGO_SUPERUSER_PASSWORD: admin
       - DJANGO_SECRET_KEY: super-secret-key
       - DJANGO_TIMEZONE: UTC
       - AUTOMATICALLY_APPROVE_REGISTRATIONS: false
