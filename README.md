@@ -123,17 +123,14 @@ volumes:
 The docker repository can be found here: [https://hub.docker.com/r/liamspatola/digivote](https://hub.docker.com/r/liamspatola/digivote).
 
 ## Usage
-To use DigiVote:
+### Creating polls and elections
+[Click to view the tutorial](https://scribehow.com/embed/Creating_Polls_and_Elections_in_the_Admin_Panel__x6ES7eIhSMOxlkwsFbl7Kg)
 
-1. Navigate to `localhost:8000/admin` and sign in
-2. Create users, polls, and elections
-3. Navigate to `localhost:8000` and sign in
-4. Click on `Polls` in the navbar
-5. Either click on the `Details` link next to each poll, or press `Vote` to vote in each poll.
-6. To close a poll, navigate to `localhost:8000/admin` and sign in, then modify the poll you want to close and uncheck the `Poll Closed` box.
-7. To delete a poll, navigate to `localhost:8000/admin` and sign in, then select the poll you want to delete and press `Delete`.
-8. If you have chosen to manually approve registrations, once a user registers, click on their username in the user panel and check the `Active` box to activate their account and allow them to sign in.
-9. The above also applies for elections.
+### Register as a new user
+[Click to view the tutorial](https://scribehow.com/embed/How_to_Register_a_User_in_DigiVote__wiBxmyAZQKS6tcGq9zLDrA)
+
+### Voting
+[Click to view the tutorial](https://scribehow.com/embed/How_To_Vote_Using_The_DigiVote_System__P1falNahRpmVNTa5zeMnZA)
 
 ## Contributing
 We welcome contributions to DigiVote. Please make sure, if you do decide to contribute, that you adhere to PEP8 standards.
