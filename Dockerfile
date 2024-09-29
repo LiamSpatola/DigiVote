@@ -8,6 +8,8 @@ RUN chmod +x /DigiVote/docker-entrypoint.sh
 
 COPY . .
 
+RUN pip install --upgrade pip
+
 RUN pip install -e .
 
 EXPOSE 8000
