@@ -239,7 +239,9 @@ def elections(request):
 def election_vote(request, election_id):
     election = get_object_or_404(Election, pk=election_id)
     candidates = Candidate.objects.filter(election=election)
-    user_has_voted = Ballot.objects.filter(user=request.user, election=election).exists()
+    user_has_voted = Ballot.objects.filter(
+        user=request.user, election=election
+    ).exists()
 
     if request.method == "POST":
         form = ElectionVote(request.POST, candidates=candidates)
@@ -329,15 +331,17 @@ def election_details(request, election_id):
             vote_percentage = round((vote / total_votes) * 100, 2)
         else:
             vote_percentage = 0
-        
-        candidates_with_percentages.append({
-            "name": candidate,
-            "votes": vote,
-            "vote_percentage": vote_percentage
-            })
+
+        candidates_with_percentages.append(
+            {"name": candidate, "votes": vote, "vote_percentage": vote_percentage}
+        )
 
     highest_first_preference_vote = max(first_preferences.values())
-    first_preference_winner = [candidate for candidate, vote in first_preferences.items() if vote == highest_first_preference_vote]
+    first_preference_winner = [
+        candidate
+        for candidate, vote in first_preferences.items()
+        if vote == highest_first_preference_vote
+    ]
 
     context = {
         "election": election,
