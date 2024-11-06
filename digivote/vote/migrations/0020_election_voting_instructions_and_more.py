@@ -7,19 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vote', '0019_election_election_type_election_number_of_seats'),
+        ("vote", "0019_election_election_type_election_number_of_seats"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='voting_instructions',
-            field=models.CharField(default='text instructions', max_length=4096),
+            model_name="election",
+            name="voting_instructions",
+            field=models.CharField(default="text instructions", max_length=4096),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='poll',
-            name='voting_instructions',
+            model_name="poll",
+            name="voting_instructions",
             field=models.CharField(default=django.utils.timezone.now, max_length=4096),
             preserve_default=False,
         ),
