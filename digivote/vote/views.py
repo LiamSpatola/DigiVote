@@ -123,9 +123,14 @@ def vote(request, poll_id):
     update_elections()
 
     poll = get_object_or_404(Poll, pk=poll_id)
+    user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
     choices = Choice.objects.filter(poll=poll)
     context = {"poll": poll, "choices": choices}
-    return render(request, "vote.html", context)
+
+    if user_has_voted:
+        return redirect("vote_fail")
+    else:
+        return render(request, "vote.html", context)
 
 
 @login_required(login_url="login")
@@ -234,6 +239,7 @@ def elections(request):
 def election_vote(request, election_id):
     election = get_object_or_404(Election, pk=election_id)
     candidates = Candidate.objects.filter(election=election)
+    user_has_voted = Ballot.objects.filter(user=request.user, election=election).exists()
 
     if request.method == "POST":
         form = ElectionVote(request.POST, candidates=candidates)
@@ -264,7 +270,10 @@ def election_vote(request, election_id):
 
     context = {"form": form, "election": election}
 
-    return render(request, "election_vote.html", context)
+    if user_has_voted:
+        return redirect("vote_fail")
+    else:
+        return render(request, "election_vote.html", context)
 
 
 @login_required(login_url="login")
