@@ -11,7 +11,8 @@
     <p class="text-center">Election Type: {% if election.election_type == "IRV" %}Instant Runoff Voting{% elif election.election_type == "STV" %}Single Transferable Vote{% else %}Preferntial Block Voting{% endif %}</p>
     <p class="text-center">Number of Seats Being Contested: {{ election.number_of_seats }}</p>
     <p class="text-center">{% if election.election_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
-    <div class="container mt-5">    
+    <div class="container mt-5">
+        <h5><strong>Candidates:</strong></h5>    
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -28,8 +29,45 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% if election.results_visible %}<p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
-        <p><strong>Result: <pre>{{ result }}</pre></strong></p>
+        
+        <h5><strong>First Preference Result:</strong></h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>First Preference Votes</th>
+                    <th>Percentage</th>
+                    <th>Amount of Total Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if election.results_visible %}
+                {% for candidate in candidates_with_percentages %}
+                <tr>
+                    <td><span {% if candidate.name in first_preference_winners %} style="color: green; font-weight: bold;" {% endif %}>{{ candidate.name }}</span></td>
+                    <td><span {% if candidate.name in first_preference_winners %} style="color: green; font-weight: bold;" {% endif %}>{{ candidate.votes }}</span></td>
+                    <td><span {% if candidate.name in first_preference_winners %} style="color: green; font-weight: bold;" {% endif %}>{{ candidate.vote_percentage|floatformat:2 }}%</span></td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ candidate.vote_percentage }}%;" aria-valuenow="{{ candidate.vote_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                {% for candidate in candidates_with_percentages %}
+                <tr>
+                    <td>{{ choice.choice.choice_text }}</td>
+                    <td><span class="material-symbols-outlined">visibility_off</span></td>
+                    <td><span class="material-symbols-outlined">visibility_off</span></td>
+                    <td><span class="material-symbols-outlined">visibility_off</span></td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+        {% if election.results_visible %}<p><strong><h5>Result: </h5><pre>{{ result }}</pre></strong></p>
+        <p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
         {% else %}<p class="text-center"><strong>The results for this election have been hidden.</strong></p>{% endif %}
     </div>
 {% else %}
