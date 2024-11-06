@@ -1,5 +1,5 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 from django.forms import Textarea
 
 from .models import Candidate, Choice, Election, Poll
@@ -23,7 +23,7 @@ class PollAdminForm(forms.ModelForm):
         model = Poll
         fields = "__all__"
         widgets = {
-            'voting_instructions': Textarea(attrs={'rows': 5, 'cols': 80}),
+            "voting_instructions": Textarea(attrs={"rows": 5, "cols": 80}),
         }
 
 
@@ -32,7 +32,7 @@ class ElectionAdminForm(forms.ModelForm):
         model = Election
         fields = "__all__"
         widgets = {
-            'voting_instructions': Textarea(attrs={'rows': 5, 'cols': 80}),
+            "voting_instructions": Textarea(attrs={"rows": 5, "cols": 80}),
         }
 
 
