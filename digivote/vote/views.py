@@ -290,13 +290,20 @@ def election_details(request, election_id):
         PyRankCandidate(candidate.full_name) for candidate in candidates
     ]
     pyrank_ballots = []
+
+    first_preferences = dict()
+    for candidate in candidates:
+        first_preferences[candidate.full_name] = 0
+
     for ballot in ballots:
         preferences = json.loads(ballot.preferences)
         ranked_candidates = []
         for i in range(len(preferences)):
             ranked_candidates.append(PyRankCandidate(preferences[i]["candidate_name"]))
         pyrank_ballots.append(PyRankBallot(ranked_candidates=ranked_candidates))
-    # election_result = pyrankvote.instant_runoff_voting(pyrank_candidates, pyrank_ballots)
+
+        preferred_candidate = preferences[0]["candidate_name"]
+        first_preferences[preferred_candidate] += 1
 
     match election.election_type:
         case "IRV":
@@ -316,9 +323,27 @@ def election_details(request, election_id):
                 number_of_seats=election.number_of_seats,
             )
 
+    candidates_with_percentages = []
+    for candidate, vote in first_preferences.items():
+        if total_votes > 0:
+            vote_percentage = round((vote / total_votes) * 100, 2)
+        else:
+            vote_percentage = 0
+        
+        candidates_with_percentages.append({
+            "name": candidate,
+            "votes": vote,
+            "vote_percentage": vote_percentage
+            })
+
+    highest_first_preference_vote = max(first_preferences.values())
+    first_preference_winner = [candidate for candidate, vote in first_preferences.items() if vote == highest_first_preference_vote]
+
     context = {
         "election": election,
         "candidates": candidates,
+        "candidates_with_percentages": candidates_with_percentages,
+        "first_preference_winners": first_preference_winner,
         "total_votes": total_votes,
         "result": election_result,
     }
