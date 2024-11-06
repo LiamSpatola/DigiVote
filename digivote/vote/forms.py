@@ -34,9 +34,13 @@ class ElectionVote(forms.Form):
             for i in range(len(candidates)):
                 choices = [(None, "Preference")]
                 for candidate in candidates:
-                    choice_label = f"{candidate.full_name} ({candidate.affiliation})" if candidate.affiliation else candidate.full_name
+                    choice_label = (
+                        f"{candidate.full_name} ({candidate.affiliation})"
+                        if candidate.affiliation
+                        else candidate.full_name
+                    )
                     choices.append((candidate.id, choice_label))
-                
+
                 self.fields[f"rank_{i+1}"] = forms.ChoiceField(
                     choices=choices,
                     label=f"Preference {i+1}",

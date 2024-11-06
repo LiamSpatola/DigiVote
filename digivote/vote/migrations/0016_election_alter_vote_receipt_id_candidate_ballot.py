@@ -4,10 +4,9 @@ import uuid
 
 import django.db.models.deletion
 import django.utils.timezone
+import vote.models
 from django.conf import settings
 from django.db import migrations, models
-
-import vote.models
 
 
 class Migration(migrations.Migration):
