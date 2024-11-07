@@ -13,6 +13,7 @@ def get_default_close_date():
 # Create your models here.
 class Poll(models.Model):
     poll_text = models.CharField(max_length=512)
+    voting_instructions = models.CharField(max_length=4096)
     publish_date = models.DateTimeField("date published", default=timezone.now)
     poll_open = models.BooleanField(default=True)
     open_date = models.DateTimeField("open date", default=timezone.now)
@@ -61,6 +62,7 @@ class Vote(models.Model):
 
 class Election(models.Model):
     election_name = models.CharField(max_length=512)
+    voting_instructions = models.CharField(max_length=4096)
     publish_date = models.DateTimeField("date published", default=timezone.now)
     election_open = models.BooleanField(default=True)
     election_type = models.CharField(

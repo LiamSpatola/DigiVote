@@ -31,10 +31,18 @@ class ElectionVote(forms.Form):
     def __init__(self, *args, candidates=None, **kwargs):
         super(ElectionVote, self).__init__(*args, **kwargs)
         if candidates:
-            for i, candidate in enumerate(candidates):
+            for i in range(len(candidates)):
+                choices = [(None, "Preference")]
+                for candidate in candidates:
+                    choice_label = (
+                        f"{candidate.full_name} ({candidate.affiliation})"
+                        if candidate.affiliation
+                        else candidate.full_name
+                    )
+                    choices.append((candidate.id, choice_label))
+
                 self.fields[f"rank_{i+1}"] = forms.ChoiceField(
-                    choices=[(None, "Preference")]
-                    + [(c.id, c.full_name) for c in candidates],
+                    choices=choices,
                     label=f"Preference {i+1}",
                     widget=forms.Select(attrs={"class": "form-control"}),
                     required=True,
