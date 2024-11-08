@@ -24,7 +24,7 @@
                     <td>{{ election.open_date }}</td>
                     <td>{{ election.close_date }}</td>
                     <td>{% if election.election_open %}<span style="color: green;">Open</span>{%else %}<span style="color: red;">Closed</span>{% endif %}</td>
-                    <td>{% if election.election_open %}<a href="{% url 'election_vote' election.id %}">Vote</a><br>{%endif %}<a href="{% url 'election_details' election.id %}">Details</a></td>
+                    <td>{% if election.election_open %}{% if election not in elections_already_voted_in %}<a href="{% url 'election_vote' election.id %}">Vote</a><br>{% endif %}{% endif %}<a href="{% url 'election_details' election.id %}">Details</a></td>
                 </tr>
             {% endif %}
             {% endfor %}

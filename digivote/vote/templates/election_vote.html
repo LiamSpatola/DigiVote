@@ -6,7 +6,7 @@
 {% block body %}
 {% if election.election_open %}
 <h1 class="text-center m-3">{{ election.election_name }}</h1>
-<p class="m-3 text-center"><strong>Instructions: </strong>{{ election.voting_instructions }}</p>
+<p class="m-3 text-center"><strong>Instructions: </strong>{{ election.voting_instructions|linebreaksbr }}</p>
 <div class="container bg-light rounded mt-5 p-3">
     <form method="post" action="{% url 'election_vote' election.id %}">
         {% csrf_token %}
