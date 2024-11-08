@@ -77,8 +77,13 @@ def polls(request):
     update_polls()
     update_elections()
 
+    polls_already_voted_in = []
+    for poll in Poll.objects.all():
+        if Vote.objects.filter(user=request.user, poll=poll).exists():
+            polls_already_voted_in.append(poll)
+
     polls = Poll.objects.all()
-    context = {"polls": polls}
+    context = {"polls": polls, "polls_already_voted_in": polls_already_voted_in}
     return render(request, "polls.html", context)
 
 
@@ -230,8 +235,13 @@ def elections(request):
     update_polls()
     update_elections()
 
+    elections_already_voted_in = []
+    for election in Election.objects.all():
+        if Ballot.objects.filter(user=request.user, election=election).exists():
+            elections_already_voted_in.append(election)
+
     elections = Election.objects.all()
-    context = {"elections": elections}
+    context = {"elections": elections, "elections_already_voted_in": elections_already_voted_in}
     return render(request, "elections.html", context)
 
 
