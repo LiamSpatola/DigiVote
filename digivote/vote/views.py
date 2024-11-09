@@ -384,18 +384,21 @@ def election_details(request, election_id):
             {"name": candidate, "votes": vote, "vote_percentage": vote_percentage}
         )
 
-    highest_first_preference_vote = max(first_preferences.values())
-    first_preference_winner = [
-        candidate
-        for candidate, vote in first_preferences.items()
-        if vote == highest_first_preference_vote
-    ]
+    if total_votes <= 0:
+        first_preference_winners = []
+    else:
+        highest_first_preference_vote = max(first_preferences.values())
+        first_preference_winners = [
+            candidate
+            for candidate, vote in first_preferences.items()
+            if vote == highest_first_preference_vote
+        ]
 
     context = {
         "election": election,
         "candidates": candidates,
         "candidates_with_percentages": candidates_with_percentages,
-        "first_preference_winners": first_preference_winner,
+        "first_preference_winners": first_preference_winners,
         "total_votes": total_votes,
         "result": election_result,
     }
