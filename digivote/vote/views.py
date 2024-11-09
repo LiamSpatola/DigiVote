@@ -136,6 +136,23 @@ def vote(request, poll_id):
         return redirect("vote_fail")
     else:
         return render(request, "vote.html", context)
+    
+@login_required(login_url="login")
+def confirm_vote(request, poll_id, choice_id):
+    update_polls()
+    update_elections()
+
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
+    if user_has_voted or not poll.poll_open:
+        return redirect("vote_fail")
+    else:
+        context = {
+            "poll": poll,
+            "choice": choice,
+        }
+        return render(request, "confirm_vote.html", context)
 
 
 @login_required(login_url="login")
