@@ -37,6 +37,9 @@ class Poll(models.Model):
 
         self.save()
 
+    def __str__(self):
+        return self.poll_text
+
 
 class Choice(models.Model):
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
@@ -48,16 +51,11 @@ class Choice(models.Model):
 
 
 class Vote(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
-    voted_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("user", "poll")
 
     def __str__(self):
-        return f"User: {self.user} Choice: {self.choice} Poll: {self.poll}"
+        return f"Choice: {self.choice} Poll: {self.poll}"
 
 
 class Election(models.Model):
@@ -103,13 +101,11 @@ class Election(models.Model):
 
 
 class Ballot(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     preferences = models.JSONField()
-    voted_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ("user", "election")
+    def __str__(self):
+        return f"Election: {self.election} Preferences: {self.preferences}"
 
 
 class Candidate(models.Model):
@@ -124,3 +120,27 @@ class Candidate(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class VoteRecord(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    voted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "poll")
+
+    def __str__(self):
+        return f"User: {self.user} Poll: {self.poll}"
+
+
+class BallotRecord(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    voted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "election")
+
+    def __str__(self):
+        return f"User: {self.user} Election: {self.election}"

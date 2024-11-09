@@ -66,17 +66,23 @@ DJANGO_HOSTNAME=127.0.0.1
 cd digivote
 ```
 
+6. Create a db.sqlite3 file in a new directory `data`
+```bash
+mkdir data
+touch db.sqlite3 # On Windows use `type nul > db.sqlite3`
+```
+
 7. Run Database Migrations
 ```bash
 python3 manage.py migrate # On Windows use `py manage.py migrate`
 ```
 
-7. Create An Admin User
+8. Create An Admin User
 ```bash
 python3 manage.py createsuperuser # On Windows use `py manage.py createsuperuser`
 ```
 
-8. Run the Development Server
+9. Run the Development Server
 ```bash
 python3 manage.py runserver # On Windows use `py manage.py runserver`
 ```

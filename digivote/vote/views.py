@@ -14,7 +14,16 @@ from pyrankvote import Ballot as PyRankBallot
 from pyrankvote import Candidate as PyRankCandidate
 
 from .forms import ElectionVote, LogInForm, RegisterForm
-from .models import Ballot, Candidate, Choice, Election, Poll, Vote
+from .models import (
+    Ballot,
+    BallotRecord,
+    Candidate,
+    Choice,
+    Election,
+    Poll,
+    Vote,
+    VoteRecord,
+)
 
 load_dotenv()
 
@@ -36,7 +45,9 @@ def update_elections():
 def index(request):
     update_polls()
     update_elections()
-    return render(request, "index.html")
+    return render(
+        request, "index.html", {"user_logged_in": request.user.is_authenticated}
+    )
 
 
 def login(request):
@@ -79,7 +90,7 @@ def polls(request):
 
     polls_already_voted_in = []
     for poll in Poll.objects.all():
-        if Vote.objects.filter(user=request.user, poll=poll).exists():
+        if VoteRecord.objects.filter(user=request.user, poll=poll).exists():
             polls_already_voted_in.append(poll)
 
     polls = Poll.objects.all()
@@ -128,7 +139,7 @@ def vote(request, poll_id):
     update_elections()
 
     poll = get_object_or_404(Poll, pk=poll_id)
-    user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
     choices = Choice.objects.filter(poll=poll)
     context = {"poll": poll, "choices": choices}
 
@@ -139,17 +150,36 @@ def vote(request, poll_id):
 
 
 @login_required(login_url="login")
+def confirm_vote(request, poll_id, choice_id):
+    update_polls()
+    update_elections()
+
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
+    if user_has_voted or not poll.poll_open:
+        return redirect("vote_fail")
+    else:
+        context = {
+            "poll": poll,
+            "choice": choice,
+        }
+        return render(request, "confirm_vote.html", context)
+
+
+@login_required(login_url="login")
 def record_vote(request, poll_id, choice_id):
     update_polls()
     update_elections()
 
     poll = get_object_or_404(Poll, pk=poll_id)
     choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
-    user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
     if user_has_voted or not poll.poll_open:
         return redirect("vote_fail")
     else:
-        Vote.objects.create(user=request.user, choice=choice, poll=poll)
+        Vote.objects.create(choice=choice, poll=poll)
+        VoteRecord.objects.create(user=request.user, poll=poll)
         choice.votes += 1
         choice.save()
         return redirect("vote_success")
@@ -176,22 +206,21 @@ def my_votes(request):
     update_polls()
     update_elections()
 
-    votes = Vote.objects.filter(user=request.user)
-    ballots = Ballot.objects.filter(user=request.user)
+    votes = VoteRecord.objects.filter(user=request.user)
+    ballots = BallotRecord.objects.filter(user=request.user)
     context = {"votes": votes, "ballots": ballots}
     return render(request, "my_votes.html", context)
 
 
 @login_required(login_url="login")
-def vote_receipt(request, vote_id, choice_visible):
+def vote_receipt(request, vote_id):
     update_polls()
     update_elections()
 
-    vote = get_object_or_404(Vote, pk=vote_id)
+    vote = get_object_or_404(VoteRecord, pk=vote_id)
     context = {
         "vote": vote,
         "current_time": timezone.now(),
-        "choice_visible": True if choice_visible == 1 else False,
     }
     return render(request, "vote_receipt.html", context)
 
@@ -237,11 +266,14 @@ def elections(request):
 
     elections_already_voted_in = []
     for election in Election.objects.all():
-        if Ballot.objects.filter(user=request.user, election=election).exists():
+        if BallotRecord.objects.filter(user=request.user, election=election).exists():
             elections_already_voted_in.append(election)
 
     elections = Election.objects.all()
-    context = {"elections": elections, "elections_already_voted_in": elections_already_voted_in}
+    context = {
+        "elections": elections,
+        "elections_already_voted_in": elections_already_voted_in,
+    }
     return render(request, "elections.html", context)
 
 
@@ -249,14 +281,16 @@ def elections(request):
 def election_vote(request, election_id):
     election = get_object_or_404(Election, pk=election_id)
     candidates = Candidate.objects.filter(election=election)
-    user_has_voted = Ballot.objects.filter(
+    user_has_voted = BallotRecord.objects.filter(
         user=request.user, election=election
     ).exists()
 
     if request.method == "POST":
         form = ElectionVote(request.POST, candidates=candidates)
         if form.is_valid():
-            if not Ballot.objects.filter(user=request.user, election=election).exists():
+            if not BallotRecord.objects.filter(
+                user=request.user, election=election
+            ).exists():
                 ranked_candidates = []
                 for i in range(1, len(candidates) + 1):
                     candidate_id = form.cleaned_data[f"rank_{i}"]
@@ -269,14 +303,9 @@ def election_vote(request, election_id):
                         }
                     )
                 preferences_json = json.dumps(ranked_candidates)
-                Ballot.objects.create(
-                    user=request.user,
-                    election=election,
-                    preferences=preferences_json,
-                )
-                return redirect("vote_success")
-            else:
-                return redirect("vote_fail")
+                request.session["unconfirmed_preferences"] = preferences_json
+                context = {"ranked_candidates": ranked_candidates, "election": election}
+                return render(request, "confirm_ballot.html", context)
     else:
         form = ElectionVote(candidates=candidates)
 
@@ -286,6 +315,28 @@ def election_vote(request, election_id):
         return redirect("vote_fail")
     else:
         return render(request, "election_vote.html", context)
+
+
+@login_required(login_url="login")
+def confirm_ballot(request, election_id):
+    update_polls()
+    update_elections()
+
+    election = get_object_or_404(Election, pk=election_id)
+
+    if not BallotRecord.objects.filter(user=request.user, election=election).exists():
+        preferences_json = request.session["unconfirmed_preferences"]
+        Ballot.objects.create(
+            election=election,
+            preferences=preferences_json,
+        )
+        BallotRecord.objects.create(user=request.user, election=election)
+
+        del request.session["unconfirmed_preferences"]
+
+        return redirect("vote_success")
+    else:
+        return redirect("vote_fail")
 
 
 @login_required(login_url="login")
@@ -346,18 +397,21 @@ def election_details(request, election_id):
             {"name": candidate, "votes": vote, "vote_percentage": vote_percentage}
         )
 
-    highest_first_preference_vote = max(first_preferences.values())
-    first_preference_winner = [
-        candidate
-        for candidate, vote in first_preferences.items()
-        if vote == highest_first_preference_vote
-    ]
+    if total_votes <= 0:
+        first_preference_winners = []
+    else:
+        highest_first_preference_vote = max(first_preferences.values())
+        first_preference_winners = [
+            candidate
+            for candidate, vote in first_preferences.items()
+            if vote == highest_first_preference_vote
+        ]
 
     context = {
         "election": election,
         "candidates": candidates,
         "candidates_with_percentages": candidates_with_percentages,
-        "first_preference_winners": first_preference_winner,
+        "first_preference_winners": first_preference_winners,
         "total_votes": total_votes,
         "result": election_result,
     }
@@ -369,7 +423,7 @@ def ballot_receipt(request, ballot_id):
     update_polls()
     update_elections()
 
-    ballot = get_object_or_404(Ballot, pk=ballot_id)
+    ballot = get_object_or_404(BallotRecord, pk=ballot_id)
     context = {
         "ballot": ballot,
         "current_time": timezone.now(),
