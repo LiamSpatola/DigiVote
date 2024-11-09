@@ -6,6 +6,27 @@
 <h1 class="text-center pt-5"><strong>Welcome.</strong></h1>
 <p class="text-center pb-5">Welcome to DigiVote, the home of digital voting.</p>
 
+{% if user_logged_in %}
+<div class="container mt-5">
+    <div class="row align-items-start">
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">how_to_vote</span></h3>
+            <h3 class="text-center"><strong>How To Vote</strong></h3>
+            <p class="text-center">To vote in a poll or election, head over to the polls or elections page by clicking the link in the navbar. Find the poll or election you want to vote in, and click the '<span class="text-primary">Vote</span>' link.</p>
+        </div>
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">percent</span></h3>
+            <h3 class="text-center"><strong>How To View Results</strong></h3>
+            <p class="text-center">To view the results for a poll or election, head over to the polls or elections page by clicking the link in the navbar. From there, select the '<span class="text-primary">Details</span>' link next to the poll or election you want to view the results for.</p>
+        </div>
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">receipt_long</span></h3>
+            <h3 class="text-center"><strong>How To Print a Voting Receipt</strong></h3>
+            <p class="text-center">To print a voting receipt for a poll or election which you have voted in, head to the my votes page by clicking the link in the navbar. From there, find the poll or election you want to print a receipt for, and click the '<span class="text-primary">Print Receipt</span>' link.</p>
+        </div>
+    </div>
+</div>
+{% else %}
 <div class="container mt-5">
     <div class="row align-items-start">
         <div class="col">
@@ -30,4 +51,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
