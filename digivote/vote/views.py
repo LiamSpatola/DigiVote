@@ -177,8 +177,8 @@ def my_votes(request):
     update_polls()
     update_elections()
 
-    votes = Vote.objects.filter(user=request.user)
-    ballots = Ballot.objects.filter(user=request.user)
+    votes = VoteRecord.objects.filter(user=request.user)
+    ballots = BallotRecord.objects.filter(user=request.user)
     context = {"votes": votes, "ballots": ballots}
     return render(request, "my_votes.html", context)
 
@@ -188,7 +188,7 @@ def vote_receipt(request, vote_id):
     update_polls()
     update_elections()
 
-    vote = get_object_or_404(Vote, pk=vote_id)
+    vote = get_object_or_404(VoteRecord, pk=vote_id)
     context = {
         "vote": vote,
         "current_time": timezone.now(),
@@ -372,7 +372,7 @@ def ballot_receipt(request, ballot_id):
     update_polls()
     update_elections()
 
-    ballot = get_object_or_404(Ballot, pk=ballot_id)
+    ballot = get_object_or_404(BallotRecord, pk=ballot_id)
     context = {
         "ballot": ballot,
         "current_time": timezone.now(),
