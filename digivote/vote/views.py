@@ -14,7 +14,7 @@ from pyrankvote import Ballot as PyRankBallot
 from pyrankvote import Candidate as PyRankCandidate
 
 from .forms import ElectionVote, LogInForm, RegisterForm
-from .models import Ballot, Candidate, Choice, Election, Poll, Vote
+from .models import Ballot, Candidate, Choice, Election, Poll, Vote, VoteRecord, BallotRecord
 
 load_dotenv()
 
@@ -79,7 +79,7 @@ def polls(request):
 
     polls_already_voted_in = []
     for poll in Poll.objects.all():
-        if Vote.objects.filter(user=request.user, poll=poll).exists():
+        if VoteRecord.objects.filter(user=request.user, poll=poll).exists():
             polls_already_voted_in.append(poll)
 
     polls = Poll.objects.all()
@@ -128,7 +128,7 @@ def vote(request, poll_id):
     update_elections()
 
     poll = get_object_or_404(Poll, pk=poll_id)
-    user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
     choices = Choice.objects.filter(poll=poll)
     context = {"poll": poll, "choices": choices}
 
@@ -145,11 +145,12 @@ def record_vote(request, poll_id, choice_id):
 
     poll = get_object_or_404(Poll, pk=poll_id)
     choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
-    user_has_voted = Vote.objects.filter(user=request.user, poll=poll).exists()
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
     if user_has_voted or not poll.poll_open:
         return redirect("vote_fail")
     else:
-        Vote.objects.create(user=request.user, choice=choice, poll=poll)
+        Vote.objects.create(choice=choice, poll=poll)
+        VoteRecord.objects.create(user=request.user, poll=poll)
         choice.votes += 1
         choice.save()
         return redirect("vote_success")
@@ -176,8 +177,8 @@ def my_votes(request):
     update_polls()
     update_elections()
 
-    votes = Vote.objects.filter(user=request.user)
-    ballots = Ballot.objects.filter(user=request.user)
+    votes = VoteRecord.objects.filter(user=request.user)
+    ballots = BallotRecord.objects.filter(user=request.user)
     context = {"votes": votes, "ballots": ballots}
     return render(request, "my_votes.html", context)
 
@@ -187,7 +188,7 @@ def vote_receipt(request, vote_id):
     update_polls()
     update_elections()
 
-    vote = get_object_or_404(Vote, pk=vote_id)
+    vote = get_object_or_404(VoteRecord, pk=vote_id)
     context = {
         "vote": vote,
         "current_time": timezone.now(),
@@ -236,11 +237,14 @@ def elections(request):
 
     elections_already_voted_in = []
     for election in Election.objects.all():
-        if Ballot.objects.filter(user=request.user, election=election).exists():
+        if BallotRecord.objects.filter(user=request.user, election=election).exists():
             elections_already_voted_in.append(election)
 
     elections = Election.objects.all()
-    context = {"elections": elections, "elections_already_voted_in": elections_already_voted_in}
+    context = {
+        "elections": elections,
+        "elections_already_voted_in": elections_already_voted_in,
+    }
     return render(request, "elections.html", context)
 
 
@@ -248,14 +252,14 @@ def elections(request):
 def election_vote(request, election_id):
     election = get_object_or_404(Election, pk=election_id)
     candidates = Candidate.objects.filter(election=election)
-    user_has_voted = Ballot.objects.filter(
+    user_has_voted = BallotRecord.objects.filter(
         user=request.user, election=election
     ).exists()
 
     if request.method == "POST":
         form = ElectionVote(request.POST, candidates=candidates)
         if form.is_valid():
-            if not Ballot.objects.filter(user=request.user, election=election).exists():
+            if not BallotRecord.objects.filter(user=request.user, election=election).exists():
                 ranked_candidates = []
                 for i in range(1, len(candidates) + 1):
                     candidate_id = form.cleaned_data[f"rank_{i}"]
@@ -269,10 +273,10 @@ def election_vote(request, election_id):
                     )
                 preferences_json = json.dumps(ranked_candidates)
                 Ballot.objects.create(
-                    user=request.user,
                     election=election,
                     preferences=preferences_json,
                 )
+                BallotRecord.objects.create(user=request.user, election=election)
                 return redirect("vote_success")
             else:
                 return redirect("vote_fail")
@@ -368,7 +372,7 @@ def ballot_receipt(request, ballot_id):
     update_polls()
     update_elections()
 
-    ballot = get_object_or_404(Ballot, pk=ballot_id)
+    ballot = get_object_or_404(BallotRecord, pk=ballot_id)
     context = {
         "ballot": ballot,
         "current_time": timezone.now(),
