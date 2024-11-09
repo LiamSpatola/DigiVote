@@ -8,7 +8,7 @@
     <p class="text-center">Published: {{ election.publish_date }}</p>
     <p class="text-center">{% if election.election_open %}Opened:{% else %}Opens:{% endif %} {{ election.open_date }}</p>
     <p class="text-center">{% if election.election_open %}Closes:{% else %}Closed:{% endif %} {{ election.close_date }}</p>
-    <p class="text-center">Election Type: {% if election.election_type == "IRV" %}Instant Runoff Voting{% elif election.election_type == "STV" %}Single Transferable Vote{% else %}Preferntial Block Voting{% endif %}</p>
+    <p class="text-center">Election Type: {% if election.election_type == "IRV" %}Instant Runoff Voting{% elif election.election_type == "STV" %}Single Transferable Vote{% else %}Preferential Block Voting{% endif %}</p>
     <p class="text-center">Number of Seats Being Contested: {{ election.number_of_seats }}</p>
     <p class="text-center">{% if election.election_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
     <div class="container mt-5">
@@ -37,7 +37,7 @@
                     <th>Candidate</th>
                     <th>First Preference Votes</th>
                     <th>Percentage</th>
-                    <th>Amount of Total Votes</th>
+                    <th>Amount of Total First Preference Votes</th>
                 </tr>
             </thead>
             <tbody>

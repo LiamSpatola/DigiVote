@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ poll.poll_text }} Vote Confirmation{% endblock %}
+
+{% block body %}
+<h1 class="text-center mt-5"><strong>Confirm Your Ballot:</strong></h1>
+<h5 class="text-center mt-5">Election: {{ election.election_name }}</h3>
+<h5 class="text-center">Selected Ballot:</h3>
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Candidate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in ranked_candidates %}
+            <tr>
+                <td>{{ candidate.rank }}</td>
+                <td>{{ candidate.candidate_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="container text-center">
+    <a href="{% url 'confirm_ballot' election.id %}" class="btn btn-primary mt-5 ml-3 mr-3" role="button">Confirm Ballot</a>
+    <a href="{% url 'elections' %}" class="btn btn-danger mt-5 ml-3 mr-3" role="button">Cancel</a>
+</div>
+{% endblock %}

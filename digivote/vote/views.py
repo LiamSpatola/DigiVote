@@ -289,14 +289,12 @@ def election_vote(request, election_id):
                         }
                     )
                 preferences_json = json.dumps(ranked_candidates)
-                Ballot.objects.create(
-                    election=election,
-                    preferences=preferences_json,
-                )
-                BallotRecord.objects.create(user=request.user, election=election)
-                return redirect("vote_success")
-            else:
-                return redirect("vote_fail")
+                request.session["unconfirmed_preferences"] = preferences_json
+                context = {
+                    "ranked_candidates": ranked_candidates,
+                    "election": election
+                }
+                return render(request, "confirm_ballot.html", context)
     else:
         form = ElectionVote(candidates=candidates)
 
@@ -307,6 +305,26 @@ def election_vote(request, election_id):
     else:
         return render(request, "election_vote.html", context)
 
+@login_required(login_url="login")
+def confirm_ballot(request, election_id):
+    update_polls()
+    update_elections()
+
+    election = get_object_or_404(Election, pk=election_id)
+
+    if not BallotRecord.objects.filter(user=request.user, election=election).exists():
+        preferences_json = request.session["unconfirmed_preferences"]
+        Ballot.objects.create(
+            election=election,
+            preferences=preferences_json,
+        )
+        BallotRecord.objects.create(user=request.user, election=election)
+
+        del request.session["unconfirmed_preferences"]
+        
+        return redirect("vote_success")
+    else:
+        return redirect("vote_fail")
 
 @login_required(login_url="login")
 def election_details(request, election_id):
