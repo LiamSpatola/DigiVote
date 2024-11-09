@@ -33,7 +33,6 @@
         <p class="text-center"><strong>Voter:</strong> {{ vote.user.first_name }} {{ vote.user.last_name }}</p>
         <p class="text-center"><strong>Username:</strong> {{ vote.user.username }}</p>
         <p class="text-center"><strong>Poll:</strong> {{ vote.poll.poll_text }}</p>
-        {% if choice_visible %}<p class="text-center"><strong>Choice:</strong> {{ vote.choice.choice_text }}</p>{% endif %}
         <p class="text-center"><strong>Voting Date and Time:</strong> {{ vote.voted_at }}</p>
         <img class="m-auto" style="margin-left: auto; margin-right: auto; display:block;" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ vote.id }}" alt="QR Code">
         <p class="m-3 text-center">This vote receipt was automatically generated at {{ current_time }} by DigiVote.</p>

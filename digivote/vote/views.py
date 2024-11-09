@@ -183,7 +183,7 @@ def my_votes(request):
 
 
 @login_required(login_url="login")
-def vote_receipt(request, vote_id, choice_visible):
+def vote_receipt(request, vote_id):
     update_polls()
     update_elections()
 
@@ -191,7 +191,6 @@ def vote_receipt(request, vote_id, choice_visible):
     context = {
         "vote": vote,
         "current_time": timezone.now(),
-        "choice_visible": True if choice_visible == 1 else False,
     }
     return render(request, "vote_receipt.html", context)
 

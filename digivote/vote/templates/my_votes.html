@@ -9,8 +9,7 @@
         <thead>
             <tr>
                 <th>Poll</th>
-                <th>Time</th>
-                <th>Selected Choice</th>
+                <th>Voting Date and Time</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,8 +18,7 @@
                 <tr>
                     <td>{{ vote.poll.poll_text }}</td>
                     <td>{{ vote.voted_at }}</td>
-                    <td>{{ vote.choice.choice_text }}</td>
-                    <td><a href="{% url 'vote_receipt' vote.id 1 %}">Print Receipt (With Selection)</a><br><a href="{% url 'vote_receipt' vote.id 0 %}">Print Receipt (Without Selection)</a></td>
+                    <td><a href="{% url 'vote_receipt' vote.id %}">Print Receipt</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -33,7 +31,7 @@
         <thead>
             <tr>
                 <th>Election</th>
-                <th>Time</th>
+                <th>Voting Date and Time</th>
                 <th>Actions</th>
             </tr>
         </thead>
