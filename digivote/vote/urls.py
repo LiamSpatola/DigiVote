@@ -19,7 +19,7 @@ urlpatterns = [
     path("fail", views.vote_fail, name="vote_fail"),
     path("my-votes", views.my_votes, name="my_votes"),
     path(
-        "vote-receipt/<int:vote_id>/<int:choice_visible>",
+        "vote-receipt/<int:vote_id>",
         views.vote_receipt,
         name="vote_receipt",
     ),
