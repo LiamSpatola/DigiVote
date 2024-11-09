@@ -240,7 +240,10 @@ def elections(request):
             elections_already_voted_in.append(election)
 
     elections = Election.objects.all()
-    context = {"elections": elections, "elections_already_voted_in": elections_already_voted_in}
+    context = {
+        "elections": elections,
+        "elections_already_voted_in": elections_already_voted_in,
+    }
     return render(request, "elections.html", context)
 
 
