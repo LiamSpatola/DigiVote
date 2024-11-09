@@ -33,6 +33,12 @@ urlpatterns = [
         name="election_details",
     ),
     path("ballot-receipt/<int:ballot_id>", views.ballot_receipt, name="ballot_receipt"),
-    path("confirm-vote/<int:poll_id>/<int:choice_id>", views.confirm_vote, name="confirm_vote"),
-    path("confirm-ballot/<int:election_id>", views.confirm_ballot, name="confirm_ballot")
+    path(
+        "confirm-vote/<int:poll_id>/<int:choice_id>",
+        views.confirm_vote,
+        name="confirm_vote",
+    ),
+    path(
+        "confirm-ballot/<int:election_id>", views.confirm_ballot, name="confirm_ballot"
+    ),
 ]
