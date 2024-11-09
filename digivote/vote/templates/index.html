@@ -3,6 +3,45 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-<h1 class="text-center p-5">Welcome.</h1>
-<p class="text-center">Welcome to DigiVote, the home of digital voting. Cast your ballot <strong>anywhere, anytime</strong> and rest assured knowing your vote remains <strong>secure and secret.</strong></p>
+<h1 class="text-center pt-5"><strong>Welcome.</strong></h1>
+<p class="text-center pb-5">Welcome to DigiVote, the home of digital voting.</p>
+
+{% if user_logged_in %}
+<div class="container mt-5">
+    <div class="row align-items-start">
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">how_to_vote</span></h3>
+            <h3 class="text-center"><strong>How To Vote</strong></h3>
+            <p class="text-center">To vote in a poll or election, head over to the polls or elections page by clicking the link in the navbar. Find the poll or election you want to vote in, and click the '<span class="text-primary">Vote</span>' link.</p>
+        </div>
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">percent</span></h3>
+            <h3 class="text-center"><strong>How To View Results</strong></h3>
+            <p class="text-center">To view the results for a poll or election, head over to the polls or elections page by clicking the link in the navbar. From there, select the '<span class="text-primary">Details</span>' link next to the poll or election you want to view the results for.</p>
+        </div>
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">receipt_long</span></h3>
+            <h3 class="text-center"><strong>How To Print a Voting Receipt</strong></h3>
+            <p class="text-center">To print a voting receipt for a poll or election which you have voted in, head to the my votes page by clicking the link in the navbar. From there, find the poll or election you want to print a receipt for, and click the '<span class="text-primary">Print Receipt</span>' link.</p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container mt-5">
+    <div class="row align-items-start">
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">lock</span></h1>
+            <p class="text-center">DigiVote uses an <strong>anonymous</strong> system to record votes. When you vote, your vote is recorded anonymously in DigiVote's database. At the same time, a vote record is recorded. This only includes your name and which poll or election you voted in, <strong>not</strong> who/what you voted for. This separates you and your vote, making your vote truly secret whilst still allowing you to confirm your vote was counted correctly.</p>
+        </div>
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">how_to_vote</span></h1>
+            <p class="text-center">DigiVote makes it simple to vote. All the usual headaches and complexities are removed. Instead, DigiVote uses a simple and modern interface with clear instructions to help you cast your vote with confidence.</p>
+        </div>
+        <div class="col">
+            <h1 class="text-center"><span class="material-symbols-outlined" style="font-size: 100px;">account_circle</span></h1>
+            <p class="text-center">DigiVote has a <strong>My Votes</strong> feature. This allows you to easily view which polls and elections you have voted in so far. Also, DigiVote allows you to print a voting receipt, giving you peace of mind knowing that your vote was correctly counted. However, your selection is <strong>always</strong> kept secret. There is no way to know who/what you voted for, and voting receipts do not show this information.</strong></p>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

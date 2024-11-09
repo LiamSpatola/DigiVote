@@ -36,7 +36,7 @@ def update_elections():
 def index(request):
     update_polls()
     update_elections()
-    return render(request, "index.html")
+    return render(request, "index.html", {"user_logged_in": request.user.is_authenticated})
 
 
 def login(request):
