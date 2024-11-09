@@ -14,7 +14,16 @@ from pyrankvote import Ballot as PyRankBallot
 from pyrankvote import Candidate as PyRankCandidate
 
 from .forms import ElectionVote, LogInForm, RegisterForm
-from .models import Ballot, Candidate, Choice, Election, Poll, Vote, VoteRecord, BallotRecord
+from .models import (
+    Ballot,
+    BallotRecord,
+    Candidate,
+    Choice,
+    Election,
+    Poll,
+    Vote,
+    VoteRecord,
+)
 
 load_dotenv()
 
@@ -36,7 +45,9 @@ def update_elections():
 def index(request):
     update_polls()
     update_elections()
-    return render(request, "index.html", {"user_logged_in": request.user.is_authenticated})
+    return render(
+        request, "index.html", {"user_logged_in": request.user.is_authenticated}
+    )
 
 
 def login(request):
@@ -136,6 +147,24 @@ def vote(request, poll_id):
         return redirect("vote_fail")
     else:
         return render(request, "vote.html", context)
+
+
+@login_required(login_url="login")
+def confirm_vote(request, poll_id, choice_id):
+    update_polls()
+    update_elections()
+
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
+    user_has_voted = VoteRecord.objects.filter(user=request.user, poll=poll).exists()
+    if user_has_voted or not poll.poll_open:
+        return redirect("vote_fail")
+    else:
+        context = {
+            "poll": poll,
+            "choice": choice,
+        }
+        return render(request, "confirm_vote.html", context)
 
 
 @login_required(login_url="login")
@@ -259,7 +288,9 @@ def election_vote(request, election_id):
     if request.method == "POST":
         form = ElectionVote(request.POST, candidates=candidates)
         if form.is_valid():
-            if not BallotRecord.objects.filter(user=request.user, election=election).exists():
+            if not BallotRecord.objects.filter(
+                user=request.user, election=election
+            ).exists():
                 ranked_candidates = []
                 for i in range(1, len(candidates) + 1):
                     candidate_id = form.cleaned_data[f"rank_{i}"]
@@ -272,14 +303,9 @@ def election_vote(request, election_id):
                         }
                     )
                 preferences_json = json.dumps(ranked_candidates)
-                Ballot.objects.create(
-                    election=election,
-                    preferences=preferences_json,
-                )
-                BallotRecord.objects.create(user=request.user, election=election)
-                return redirect("vote_success")
-            else:
-                return redirect("vote_fail")
+                request.session["unconfirmed_preferences"] = preferences_json
+                context = {"ranked_candidates": ranked_candidates, "election": election}
+                return render(request, "confirm_ballot.html", context)
     else:
         form = ElectionVote(candidates=candidates)
 
@@ -289,6 +315,28 @@ def election_vote(request, election_id):
         return redirect("vote_fail")
     else:
         return render(request, "election_vote.html", context)
+
+
+@login_required(login_url="login")
+def confirm_ballot(request, election_id):
+    update_polls()
+    update_elections()
+
+    election = get_object_or_404(Election, pk=election_id)
+
+    if not BallotRecord.objects.filter(user=request.user, election=election).exists():
+        preferences_json = request.session["unconfirmed_preferences"]
+        Ballot.objects.create(
+            election=election,
+            preferences=preferences_json,
+        )
+        BallotRecord.objects.create(user=request.user, election=election)
+
+        del request.session["unconfirmed_preferences"]
+
+        return redirect("vote_success")
+    else:
+        return redirect("vote_fail")
 
 
 @login_required(login_url="login")
@@ -349,18 +397,21 @@ def election_details(request, election_id):
             {"name": candidate, "votes": vote, "vote_percentage": vote_percentage}
         )
 
-    highest_first_preference_vote = max(first_preferences.values())
-    first_preference_winner = [
-        candidate
-        for candidate, vote in first_preferences.items()
-        if vote == highest_first_preference_vote
-    ]
+    if total_votes <= 0:
+        first_preference_winners = []
+    else:
+        highest_first_preference_vote = max(first_preferences.values())
+        first_preference_winners = [
+            candidate
+            for candidate, vote in first_preferences.items()
+            if vote == highest_first_preference_vote
+        ]
 
     context = {
         "election": election,
         "candidates": candidates,
         "candidates_with_percentages": candidates_with_percentages,
-        "first_preference_winners": first_preference_winner,
+        "first_preference_winners": first_preference_winners,
         "total_votes": total_votes,
         "result": election_result,
     }

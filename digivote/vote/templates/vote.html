@@ -19,7 +19,7 @@
                         {% for choice in choices %}
                         <tr>
                             <td>{{ choice.choice_text }}</td>
-                            <td><a href="{% url 'record_vote' poll.id choice.id %}">Vote For This Choice</a></td>
+                            <td><a href="{% url 'confirm_vote' poll.id choice.id %}">Vote For This Choice</a></td>
                         {% endfor %}
                     </tbody>
                 </table>
