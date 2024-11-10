@@ -1,5 +1,6 @@
 import json
 import os
+from math import ceil
 
 import pyrankvote
 from django.contrib.auth import authenticate
@@ -13,19 +14,10 @@ from dotenv import load_dotenv
 from pyrankvote import Ballot as PyRankBallot
 from pyrankvote import Candidate as PyRankCandidate
 from pyrankvote.helpers import CompareMethodIfEqual
-from math import ceil
 
 from .forms import ElectionVote, LogInForm, RegisterForm
-from .models import (
-    Ballot,
-    BallotRecord,
-    Candidate,
-    Choice,
-    Election,
-    Poll,
-    Vote,
-    VoteRecord,
-)
+from .models import (Ballot, BallotRecord, Candidate, Choice, Election, Poll,
+                     Vote, VoteRecord)
 
 load_dotenv()
 
@@ -376,25 +368,27 @@ def election_details(request, election_id):
                 pyrank_candidates,
                 pyrank_ballots,
                 compare_method_if_equal=CompareMethodIfEqual.MostSecondChoiceVotes,
-                pick_random_if_blank=False
+                pick_random_if_blank=False,
             )
-            votes_to_win =  round(ceil(total_votes / 2.0), 2)
+            votes_to_win = round(ceil(total_votes / 2.0), 2)
         case "STV":
             election_result = pyrankvote.single_transferable_vote(
                 pyrank_candidates,
                 pyrank_ballots,
                 number_of_seats=election.number_of_seats,
                 compare_method_if_equal=CompareMethodIfEqual.MostSecondChoiceVotes,
-                pick_random_if_blank=False
+                pick_random_if_blank=False,
             )
-            votes_to_win = round((total_votes / float((election.number_of_seats + 1))), 2)
+            votes_to_win = round(
+                (total_votes / float((election.number_of_seats + 1))), 2
+            )
         case "PBV":
             election_result = pyrankvote.preferential_block_voting(
                 pyrank_candidates,
                 pyrank_ballots,
                 number_of_seats=election.number_of_seats,
                 compare_method_if_equal=CompareMethodIfEqual.MostSecondChoiceVotes,
-                pick_random_if_blank=False
+                pick_random_if_blank=False,
             )
             votes_to_win = round(ceil(total_votes / 2.0), 2)
 
