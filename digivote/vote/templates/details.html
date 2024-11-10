@@ -9,6 +9,7 @@
     <p class="text-center">{% if poll.poll_open %}Opened:{% else %}Opens:{% endif %} {{ poll.open_date }}</p>
     <p class="text-center">{% if poll.poll_open %}Closes:{% else %}Closed:{% endif %} {{ poll.close_date }}</p>
     <p class="text-center">{% if poll.poll_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
+    <p class="text-center pt-3"><strong>{% if poll.poll_open %}<span style="color: red;">The results shown below are preliminary. Official results will not be available until this poll closes.</span>{% else %}<span style="color: green;">The results shown below are the official results for this poll.{% endif %}</span></strong></p>
     <div class="container mt-5">    
         <table class="table table-striped">
             <thead>

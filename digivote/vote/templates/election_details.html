@@ -11,6 +11,7 @@
     <p class="text-center">Election Type: {% if election.election_type == "IRV" %}Instant Runoff Voting{% elif election.election_type == "STV" %}Single Transferable Vote{% else %}Preferential Block Voting{% endif %}</p>
     <p class="text-center">Number of Seats Being Contested: {{ election.number_of_seats }}</p>
     <p class="text-center">{% if election.election_open %}<span style="color: green;">Open</span>{% else %}<span style="color: red;">Closed</span>{% endif %}</p>
+    <p class="text-center pt-3"><strong>{% if election.election_open %}<span style="color: red;">The results shown below are preliminary. Official results will not be available until this election closes.</span>{% else %}<span style="color: green;">The results shown below are the official results of this election.{% endif %}</span></strong></p>
     <div class="container mt-5">
         <h5><strong>Candidates:</strong></h5>    
         <table class="table table-striped">
@@ -29,7 +30,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        
         <h5><strong>First Preference Result:</strong></h5>
         <table class="table table-striped">
             <thead>
