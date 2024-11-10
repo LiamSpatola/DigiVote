@@ -68,6 +68,7 @@
         </table>
         {% if election.results_visible %}<p><strong><h5>Result: </h5><pre>{{ result }}</pre></strong></p>
         <p class="text-center"><strong>Total Votes: {{ total_votes }}</strong></p>
+        <p class="text-center"><strong>Votes to Win a Seat: {{ votes_to_win }}</strong></p>
         {% else %}<p class="text-center"><strong>The results for this election have been hidden.</strong></p>{% endif %}
     </div>
 {% else %}
